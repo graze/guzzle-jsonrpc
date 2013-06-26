@@ -1,6 +1,7 @@
 # Guzzle JsonRpc #
 
-**Version:** *0.1.0*
+**Version:** *0.1.0*<br/>
+**Master build:** [![Master branch build status][travis-master]][travis]
 
 This library implements [JSON-RPC 2.0][jsonrpc] for the [Guzzle HTTP client][guzzle].<br/>
 It can be installed in whichever way you prefer, but we recommend [Composer][packagist].
@@ -63,6 +64,8 @@ You can find a copy of this license at http://www.opensource.org/licenses/mit or
 
 
 <!-- Links -->
+[travis]: https://travis-ci.org/graze/guzzle-jsonrpc
+[travis-master]: https://travis-ci.org/graze/guzzle-jsonrpc.png?branch=master
 [packagist]: https://packagist.org/packages/graze/guzzle-jsonrpc
 [vagrant]:   http://vagrantup.com
 [jsonrpc]:   http://jsonrpc.org/specification
