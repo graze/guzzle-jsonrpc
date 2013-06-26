@@ -1,0 +1,36 @@
+{
+    "name": "graze/guzzle-jsonrpc",
+    "description": "JSON-RPC client for Guzzle",
+    "keywords": ["json", "jsonrpc", "guzzle", "http", "rpc"],
+    "homepage": "https://github.com/graze/event",
+
+    "version": "0.1.0",
+
+    "license": "MIT",
+    "type": "library",
+
+    "authors": [
+        {
+            "name": "Andrew Lawson",
+            "email": "andrew.lawson@graze.com",
+            "homepage": "http://graze.com"
+        }
+    ],
+
+    "autoload": {
+        "psr-0": {
+            "Graze\\Guzzle\\JsonRpc": "./lib"
+        }
+    },
+
+    "require": {
+        "guzzle/guzzle": "~3.7.0",
+        "php": ">=5.3.3"
+    },
+
+    "require-dev": {
+        "ext-xdebug": "~2.2.1",
+        "mockery/mockery": "~0.8.0",
+        "phpunit/phpunit": "~3.7.21"
+    }
+}
