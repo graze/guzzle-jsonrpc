@@ -1,0 +1,13 @@
+language: php
+
+php: [5.3, 5.4, 5.5]
+
+before_script:
+  - php -r "eval('?>'.file_get_contents('https://getcomposer.org/installer'));"
+  - php composer.phar install --dev --prefer-source
+
+script: make tests
+
+notifications:
+  email:
+    - andrew.lawson@graze.com
