@@ -4,7 +4,7 @@
     "keywords": ["json", "jsonrpc", "guzzle", "http", "rpc"],
     "homepage": "https://github.com/graze/event",
 
-    "version": "0.1.0",
+    "version": "0.1.1",
 
     "license": "MIT",
     "type": "library",
