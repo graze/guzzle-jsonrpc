@@ -1,4 +1,4 @@
-# Guzzle JsonRpc #
+# Guzzle JSON-RPC #
 
 **Version:** *0.1.1*<br/>
 **Master build:** [![Master branch build status][travis-master]][travis]
