@@ -2,7 +2,7 @@
     "name": "graze/guzzle-jsonrpc",
     "description": "JSON-RPC client for Guzzle",
     "keywords": ["json", "jsonrpc", "guzzle", "http", "rpc"],
-    "homepage": "https://github.com/graze/event",
+    "homepage": "https://github.com/graze/guzzle-jsonrpc",
 
     "version": "0.1.1",
 
