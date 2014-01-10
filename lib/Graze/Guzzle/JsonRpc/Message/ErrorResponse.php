@@ -112,6 +112,6 @@ class ErrorResponse extends BaseResponse implements ResponseInterface
      */
     protected function isCodeValid($code)
     {
-        return in_array($code, array_merge(array(-32700), range(-32600, -32603), range(-32000, -32099)));
+        return is_int($code);
     }
 }

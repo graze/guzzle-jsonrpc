@@ -135,8 +135,8 @@ class ErrorResponseTest extends \Guzzle\Tests\GuzzleTestCase
         $response = new ErrorResponse($this->decorated, $data = array(
             'jsonrpc' => JsonRpcClientInterface::VERSION,
             'error'   => array(
-                'code'    => 1,
-                'message' => 'foo'
+                'code'    => 'foo',
+                'message' => 'bar'
             ),
             'id'      => 1
         ));
