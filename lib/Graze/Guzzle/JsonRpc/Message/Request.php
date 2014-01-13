@@ -34,7 +34,9 @@ class Request extends EntityEnclosingRequest
     {
         parent::__construct($request->getMethod(), $request->getUrl(), $request->getHeaders());
 
-        $this->setClient($request->getClient());
+        $client = $request->getClient();
+        $this->setClient($client);
+        $this->setEventDispatcher($client->getEventDispatcher());
         $this->rpcFields = new Collection(array(
             'jsonrpc' => JsonRpcClientInterface::VERSION,
             'method'  => (string) $method

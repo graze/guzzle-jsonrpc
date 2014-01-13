@@ -10,6 +10,7 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $this->client = m::mock('Graze\\Guzzle\\JsonRpc\\JsonRpcClientInterface');
         $this->decorated = m::mock('Guzzle\\Http\\Message\\RequestInterface');
+        $this->dispatcher = m::mock('Symfony\\Component\\EventDispatcher\\EventDispatcherInterface');
     }
 
     public function testParent()
@@ -34,6 +35,13 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
              ->once()
              ->withNoArgs()
              ->andReturn($this->client);
+        $this->client->shouldReceive('getEventDispatcher')
+             ->once()
+             ->withNoArgs()
+             ->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener')
+             ->once()
+             ->with('request.error', m::type('array'), -255);
 
         $request = new Request($this->decorated, 'foo');
 
@@ -63,6 +71,13 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
              ->once()
              ->withNoArgs()
              ->andReturn($this->client);
+        $this->client->shouldReceive('getEventDispatcher')
+             ->once()
+             ->withNoArgs()
+             ->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener')
+             ->once()
+             ->with('request.error', m::type('array'), -255);
 
         $request = new Request($this->decorated, 'foo', 1);
 
@@ -93,6 +108,13 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
              ->once()
              ->withNoArgs()
              ->andReturn($this->client);
+        $this->client->shouldReceive('getEventDispatcher')
+             ->once()
+             ->withNoArgs()
+             ->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener')
+             ->once()
+             ->with('request.error', m::type('array'), -255);
 
         $request = new Request($this->decorated, 'foo');
 
@@ -113,6 +135,8 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $this->decorated->shouldReceive('getHeaders');
         $this->decorated->shouldReceive('getMethod');
         $this->decorated->shouldReceive('getUrl');
+        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener');
 
         $request = new Request($this->decorated, 'foo');
         $this->client->shouldReceive('send')
@@ -150,6 +174,8 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $this->decorated->shouldReceive('getHeaders');
         $this->decorated->shouldReceive('getMethod');
         $this->decorated->shouldReceive('getUrl');
+        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener');
 
         $request = new Request($this->decorated, 'foo', 1);
         $this->client->shouldReceive('send')
@@ -192,6 +218,8 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $this->decorated->shouldReceive('getHeaders');
         $this->decorated->shouldReceive('getMethod');
         $this->decorated->shouldReceive('getUrl');
+        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener');
 
         $request = new Request($this->decorated, 'foo', 1);
         $this->client->shouldReceive('send')
@@ -226,6 +254,8 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $this->decorated->shouldReceive('getHeaders');
         $this->decorated->shouldReceive('getMethod');
         $this->decorated->shouldReceive('getUrl');
+        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener');
 
         $request = new Request($this->decorated, 'foo', 1);
         $this->client->shouldReceive('send')
@@ -245,6 +275,8 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $this->decorated->shouldReceive('getHeaders');
         $this->decorated->shouldReceive('getMethod');
         $this->decorated->shouldReceive('getUrl');
+        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener');
 
         $request = new Request($this->decorated, 'foo');
         $request->setRpcField('params', array('bar' => 'baz'));
@@ -270,6 +302,8 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $this->decorated->shouldReceive('getHeaders');
         $this->decorated->shouldReceive('getMethod');
         $this->decorated->shouldReceive('getUrl');
+        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener');
 
         $request = new Request($this->decorated, 'foo');
         $this->assertSame('foo', $request->getRpcField('method'));
@@ -281,6 +315,8 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $this->decorated->shouldReceive('getHeaders');
         $this->decorated->shouldReceive('getMethod');
         $this->decorated->shouldReceive('getUrl');
+        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener');
 
         $request = new Request($this->decorated, 'foo');
         $this->assertNull($request->getRpcField('foo'));
@@ -292,6 +328,8 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $this->decorated->shouldReceive('getHeaders');
         $this->decorated->shouldReceive('getMethod');
         $this->decorated->shouldReceive('getUrl');
+        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener');
 
         $request = new Request($this->decorated, 'foo');
         $this->assertSame(array(
@@ -306,6 +344,8 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $this->decorated->shouldReceive('getHeaders');
         $this->decorated->shouldReceive('getMethod');
         $this->decorated->shouldReceive('getUrl');
+        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener');
 
         $request = new Request($this->decorated, 'foo');
         $request->setRpcField('foo', 'bar');
@@ -322,6 +362,8 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $this->decorated->shouldReceive('getHeaders');
         $this->decorated->shouldReceive('getMethod');
         $this->decorated->shouldReceive('getUrl');
+        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener');
 
         $request = new Request($this->decorated, 'foo');
         $request->setRpcField('method', 'bar');
