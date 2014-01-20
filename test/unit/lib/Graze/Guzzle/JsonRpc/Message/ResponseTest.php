@@ -80,23 +80,4 @@ class ResponseTest extends \Guzzle\Tests\GuzzleTestCase
             'id'      => 1
         ));
     }
-
-    public function testWithNoVersion()
-    {
-        $this->decorated->shouldReceive('getStatusCode')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(200);
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
-
-        $this->setExpectedException('OutOfRangeException');
-
-        $response = new Response($this->decorated, $data = array(
-            'result'  => array('foo', 'bar'),
-            'id'      => 1
-        ));
-    }
 }
