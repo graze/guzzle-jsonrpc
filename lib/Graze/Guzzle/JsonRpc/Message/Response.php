@@ -32,7 +32,7 @@ class Response extends BaseResponse implements ResponseInterface
         parent::__construct($response->getStatusCode(), $response->getHeaders());
         $this->rpcFields = new Collection($data);
 
-        foreach (array('jsonrpc', 'id', 'result') as $key) {
+        foreach (array('id', 'result') as $key) {
             if (!$this->rpcFields->hasKey($key)) {
                 throw new OutOfRangeException('Parameter "' . $key . '" expected but not provided.');
             }
