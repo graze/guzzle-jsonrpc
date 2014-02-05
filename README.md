@@ -1,6 +1,6 @@
 # Guzzle JSON-RPC #
 
-**Version:** *0.2.2*<br/>
+**Version:** *0.2.3*<br/>
 **Master build:** [![Master branch build status][travis-master]][travis]
 
 This library implements [JSON-RPC 2.0][jsonrpc] for the [Guzzle HTTP client][guzzle].<br/>
@@ -8,7 +8,7 @@ It can be installed in whichever way you prefer, but we recommend [Composer][pac
 ```json
 {
     "require": {
-        "graze/guzzle-jsonrpc": "~0.2.2"
+        "graze/guzzle-jsonrpc": "~0.2.3"
     }
 }
 ```
