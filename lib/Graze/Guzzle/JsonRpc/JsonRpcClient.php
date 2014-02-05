@@ -20,6 +20,18 @@ use Guzzle\Http\Message\RequestInterface;
 class JsonRpcClient extends Client implements JsonRpcClientInterface
 {
     /**
+     * {@inheritdoc}
+     */
+    public function __construct($baseUrl = '', $config = null)
+    {
+        parent::__construct($baseUrl, $config);
+
+        $this->setDefaultHeaders(array(
+            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3'
+        ));
+    }
+
+    /**
      * @param JsonRpcRequest[] $requests
      * @param string $uri
      * @param array $headers
