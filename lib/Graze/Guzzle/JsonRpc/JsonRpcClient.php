@@ -32,10 +32,7 @@ class JsonRpcClient extends Client implements JsonRpcClientInterface
     }
 
     /**
-     * @param JsonRpcRequest[] $requests
-     * @param string $uri
-     * @param array $headers
-     * @return BatchRequest
+     * {@inheritdoc}
      */
     public function batch(array $requests, $uri = null, $headers = null)
     {
@@ -45,10 +42,7 @@ class JsonRpcClient extends Client implements JsonRpcClientInterface
     }
 
     /**
-     * @param string $method
-     * @param array $params
-     * @param string $uri
-     * @param array $headers
+     * {@inheritdoc}
      */
     public function notification($method, $params = null, $uri = null, $headers = null)
     {
@@ -61,11 +55,7 @@ class JsonRpcClient extends Client implements JsonRpcClientInterface
     }
 
     /**
-     * @param string $method
-     * @param integer $id
-     * @param string $uri
-     * @param array $headers
-     * @return JsonRpcRequest
+     * {@inheritdoc}
      */
     public function request($method, $id, $params = null, $uri = null, $headers = null)
     {

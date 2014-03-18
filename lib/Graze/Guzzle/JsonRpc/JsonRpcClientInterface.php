@@ -36,12 +36,14 @@ interface JsonRpcClientInterface extends ClientInterface
      * @param array $params
      * @param string $uri
      * @param array $headers
+     * @return Request
      */
     public function notification($method, $params = null, $uri = null, $headers = null);
 
     /**
      * @param string $method
      * @param integer $id
+     * @param array $params
      * @param string $uri
      * @param array $headers
      * @return Request
