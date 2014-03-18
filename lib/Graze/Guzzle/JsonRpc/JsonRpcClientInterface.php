@@ -29,7 +29,7 @@ interface JsonRpcClientInterface extends ClientInterface
      * @param array $headers
      * @return BatchRequest
      */
-    public function batch(array $requests, $uri = null, $headers = null);
+    public function batch(array $requests, $uri = null, array $headers = array());
 
     /**
      * @param string $method
@@ -38,7 +38,7 @@ interface JsonRpcClientInterface extends ClientInterface
      * @param array $headers
      * @return Request
      */
-    public function notification($method, $params = null, $uri = null, $headers = null);
+    public function notification($method, array $params = array(), $uri = null, array $headers = array());
 
     /**
      * @param string $method
@@ -48,5 +48,5 @@ interface JsonRpcClientInterface extends ClientInterface
      * @param array $headers
      * @return Request
      */
-    public function request($method, $id, $params = null, $uri = null, $headers = null);
+    public function request($method, $id, array $params = array(), $uri = null, array $headers = array());
 }

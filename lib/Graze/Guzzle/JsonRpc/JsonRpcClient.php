@@ -34,7 +34,7 @@ class JsonRpcClient extends Client implements JsonRpcClientInterface
     /**
      * {@inheritdoc}
      */
-    public function batch(array $requests, $uri = null, $headers = null)
+    public function batch(array $requests, $uri = null, array $headers = array())
     {
         return $this->prepareRequest(
             new BatchRequest($this->createRequest(RequestInterface::POST, $uri, $headers), $requests)
@@ -44,7 +44,7 @@ class JsonRpcClient extends Client implements JsonRpcClientInterface
     /**
      * {@inheritdoc}
      */
-    public function notification($method, $params = null, $uri = null, $headers = null)
+    public function notification($method, array $params = array(), $uri = null, array $headers = array())
     {
         $request = new Request($this->createRequest(RequestInterface::POST, $uri, $headers), $method);
         $request->setRpcField('params', $params);
@@ -57,7 +57,7 @@ class JsonRpcClient extends Client implements JsonRpcClientInterface
     /**
      * {@inheritdoc}
      */
-    public function request($method, $id, $params = null, $uri = null, $headers = null)
+    public function request($method, $id, array $params = array(), $uri = null, array $headers = array())
     {
         $request = new Request($this->createRequest(RequestInterface::POST, $uri, $headers), $method, $id);
         $request->setRpcField('params', $params);
