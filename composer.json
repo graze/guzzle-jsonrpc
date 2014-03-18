@@ -30,7 +30,7 @@
 
     "require-dev": {
         "ext-xdebug": "~2.2.1",
-        "mockery/mockery": "~0.8.0",
+        "mockery/mockery": "~0.9.0",
         "phpunit/phpunit": "~3.7.21"
     }
 }
