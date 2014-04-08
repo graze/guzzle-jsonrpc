@@ -13,8 +13,8 @@
         }
     ],
     "autoload": {
-        "psr-0": {
-            "Graze\\Guzzle\\JsonRpc": "./lib"
+        "psr-4": {
+            "Graze\\Guzzle\\JsonRpc\\": "src"
         }
     },
     "require": {
