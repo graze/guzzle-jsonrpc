@@ -16,7 +16,7 @@
 
     <!-- Listeners -->
     <listeners>
-      <listener class="Mockery\Adapter\Phpunit\TestListener"/>
+        <listener class="Mockery\Adapter\Phpunit\TestListener"/>
     </listeners>
 
 </phpunit>
