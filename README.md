@@ -8,7 +8,7 @@ It can be installed in whichever way you prefer, but we recommend [Composer][pac
 ```json
 {
     "require": {
-        "graze/guzzle-jsonrpc": "~0.3.0"
+        "graze/guzzle-jsonrpc": "*"
     }
 }
 ```
