@@ -8,4 +8,5 @@ before_script:
 script:
  - vendor/bin/phpunit
 
-notifications: false
+notifications:
+  email: false
