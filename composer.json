@@ -9,7 +9,7 @@
     "authors": [
         {
             "name": "Graze tech team",
-            "homepage": "https://github.com/graze/sort/graphs/contributors"
+            "homepage": "https://github.com/graze/guzzle-jsonrpc/graphs/contributors"
         }
     ],
     "autoload": {
