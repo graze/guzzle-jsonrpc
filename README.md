@@ -1,6 +1,6 @@
 # Guzzle JSON-RPC #
 
-**Version:** *0.4.0*<br/>
+**Version:** *0.4.1*<br/>
 **Master build:** [![Master branch build status][travis-master]][travis]
 
 This library implements [JSON-RPC 2.0][jsonrpc] for the [Guzzle v3 HTTP client][guzzle].<br/>
