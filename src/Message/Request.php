@@ -52,7 +52,7 @@ class Request extends EntityEnclosingRequest
      */
     public function send()
     {
-        $this->setBody($this->jsonEncode($this->getRpcFields()));
+        $this->setBody($this->jsonEncode($this->getRpcFields()), 'application/json');
         $response = parent::send();
 
         if ($this->rpcFields->hasKey('id')) {
