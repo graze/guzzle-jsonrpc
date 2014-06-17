@@ -58,7 +58,7 @@ class BatchRequest extends EntityEnclosingRequest
                 }
 
                 $data = $map[$id];
-                $responses[] = isset($data['result']) ? new Response($batch, $data) : new ErrorResponse($batch, $data);
+                $responses[] = array_key_exists('result', $data) ? new Response($batch, $data) : new ErrorResponse($batch, $data);
             }
         }
 
