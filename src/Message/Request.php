@@ -61,7 +61,7 @@ class Request extends EntityEnclosingRequest
                 throw new RuntimeException('Response with ID "' . $this->getRpcField('id') . '" expected.');
             }
 
-            return isset($data['result']) ? new Response($response, $data) : new ErrorResponse($response, $data);
+            return array_key_exists('result', $data) ? new Response($response, $data) : new ErrorResponse($response, $data);
         }
     }
 
