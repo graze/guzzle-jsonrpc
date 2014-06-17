@@ -164,6 +164,57 @@ class BatchRequestTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertSame($json, (string) $request->getBody());
     }
 
+    public function testSendWithIdAndNullResult()
+    {
+        $mockResponse = m::mock('Guzzle\\Http\\Message\\Response');
+
+        $requestId = rand(1,100);
+        $responseData = array(
+            'jsonrpc' => '2.0',
+            'id' => $requestId,
+            'result' => null
+        );
+
+        $mockResponse->shouldReceive('getStatusCode')
+            ->once()
+            ->withNoArgs()
+            ->andReturn(200);
+
+        $mockResponse->shouldReceive('getHeaders')
+            ->once()
+            ->withNoArgs()
+            ->andReturn(array());
+
+        $mockResponse->shouldReceive('json')
+            ->once()
+            ->withNoArgs()
+            ->andReturn(array($responseData));
+
+        $request = m::mock('Graze\\Guzzle\\JsonRpc\\Message\\Request');
+        $request->shouldReceive('getRpcField')
+            ->times(4)
+            ->with('id')
+            ->andReturn($requestId);
+        $request->shouldReceive('getRpcFields')
+            ->once()
+            ->withNoArgs()
+            ->andReturn($responseData);
+
+        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
+        $this->decorated->shouldReceive('getHeaders');
+        $this->decorated->shouldReceive('getMethod');
+        $this->decorated->shouldReceive('getUrl');
+
+        $batchRequest = new BatchRequest($this->decorated, array($request));
+        $this->client->shouldReceive('send')
+            ->once()
+            ->with($batchRequest)
+            ->andReturn($mockResponse);
+
+        $responseArray = $batchRequest->send();
+        $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Response', reset($responseArray));
+    }
+
     public function testSendWithIdAndErrorResponse()
     {
         $data = array(
