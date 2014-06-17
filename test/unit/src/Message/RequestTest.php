@@ -194,6 +194,46 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         ), $request->getRpcFields());
     }
 
+    public function testSendWithIdAndNullResult()
+    {
+        $mockResponse = m::mock('Guzzle\\Http\\Message\\Response');
+
+        $mockResponse->shouldReceive('getStatusCode')
+            ->once()
+            ->withNoArgs()
+            ->andReturn(200);
+
+        $mockResponse->shouldReceive('getHeaders')
+            ->once()
+            ->withNoArgs()
+            ->andReturn(array());
+
+        $requestId = rand(1,100);
+        $mockResponse->shouldReceive('json')
+            ->once()
+            ->withNoArgs()
+            ->andReturn(array(
+                    'jsonrpc' => '2.0',
+                    'id' => $requestId,
+                    'result' => null
+                ));
+
+        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
+        $this->decorated->shouldReceive('getHeaders');
+        $this->decorated->shouldReceive('getMethod');
+        $this->decorated->shouldReceive('getUrl');
+        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
+        $this->dispatcher->shouldReceive('addListener');
+
+        $request = new Request($this->decorated, 'foo', $requestId);
+        $this->client->shouldReceive('send')
+            ->once()
+            ->with($request)
+            ->andReturn($mockResponse);
+
+        $this->assertInstanceOf("Graze\\Guzzle\\JsonRpc\\Message\\Response", $request->send());
+    }
+
     public function testSendWithIdAndErrorResponse()
     {
         $response = m::mock('Guzzle\\Http\\Message\\Response');
