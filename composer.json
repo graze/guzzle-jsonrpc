@@ -1,7 +1,7 @@
 {
     "name": "graze/guzzle-jsonrpc",
     "description": "JSON-RPC 2.0 client for Guzzle",
-    "keywords": ["json", "json-rpc", "jsonrpc", "guzzle", "http", "rpc"],
+    "keywords": ["guzzle", "http", "json", "json-rpc", "jsonrpc", "rpc"],
     "homepage": "https://github.com/graze/guzzle-jsonrpc",
     "license": "MIT",
     "type": "library",

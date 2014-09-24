@@ -1,4 +1,3 @@
-.report
 .vagrant
 composer.lock
 phpunit.xml
