@@ -2,10 +2,10 @@
 namespace Graze\Guzzle\JsonRpc;
 
 use Graze\Guzzle\JsonRpc\JsonRpcClientInterface;
-use Guzzle\Http\Message\RequestInterface;
+use Guzzle\Tests\GuzzleTestCase as TestCase;
 use Mockery as m;
 
-class JsonRpcClientTest extends \Guzzle\Tests\GuzzleTestCase
+class JsonRpcClientTest extends TestCase
 {
     public function setup()
     {
@@ -15,21 +15,20 @@ class JsonRpcClientTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\JsonRpcClientInterface', $this->client);
+        $this->assertInstanceOf('Graze\Guzzle\JsonRpc\JsonRpcClientInterface', $this->client);
     }
 
     public function testParent()
     {
-        $this->assertInstanceOf('Guzzle\\Service\\Client', $this->client);
+        $this->assertInstanceOf('Guzzle\Service\Client', $this->client);
     }
 
     public function testBatch()
     {
         $request = $this->client->batch(array());
 
-        $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\BatchRequest', $request);
-        $this->assertSame(RequestInterface::POST, $request->getMethod());
-        $this->assertSame($this->base, $request->getUrl());
+        $this->assertInstanceOf('Graze\Guzzle\JsonRpc\Message\BatchRequest', $request);
+        $this->assertEquals($this->base, $request->getUrl());
     }
 
     public function testBatchWithUri()
@@ -37,8 +36,16 @@ class JsonRpcClientTest extends \Guzzle\Tests\GuzzleTestCase
         $request = $this->client->batch(array(), 'foo');
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\BatchRequest', $request);
-        $this->assertSame(RequestInterface::POST, $request->getMethod());
-        $this->assertSame($this->base . '/foo', $request->getUrl());
+        $this->assertEquals($this->base . '/foo', $request->getUrl());
+    }
+
+    public function testBatchWithHeaders()
+    {
+        $headers = array('foo' => 'bar');
+        $request = $this->client->batch(array(), null, $headers);
+
+        $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\BatchRequest', $request);
+        $this->assertTrue($request->getHeaders()->get('foo')->hasValue('bar'));
     }
 
     public function testBatchWithSubRequests()
@@ -48,8 +55,6 @@ class JsonRpcClientTest extends \Guzzle\Tests\GuzzleTestCase
         ));
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\BatchRequest', $request);
-        $this->assertSame(RequestInterface::POST, $request->getMethod());
-        $this->assertSame($this->base, $request->getUrl());
     }
 
     public function testNotification()
@@ -57,12 +62,11 @@ class JsonRpcClientTest extends \Guzzle\Tests\GuzzleTestCase
         $request = $this->client->notification('foo');
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Request', $request);
-        $this->assertSame(RequestInterface::POST, $request->getMethod());
-        $this->assertSame($this->base, $request->getUrl());
-        $this->assertSame(JsonRpcClientInterface::VERSION, $request->getRpcField('jsonrpc'));
-        $this->assertSame('foo', $request->getRpcField('method'));
-        $this->assertSame(array(), $request->getRpcField('params'));
-        $this->assertNull($request->getRpcField('id'));
+        $this->assertEquals($this->base, $request->getUrl());
+        $this->assertEquals('2.0', $request->getRpcVersion());
+        $this->assertEquals('foo', $request->getRpcMethod());
+        $this->assertEquals(array(), $request->getRpcParams());
+        $this->assertNull($request->getRpcId());
     }
 
     public function testNotificationWithParams()
@@ -70,12 +74,11 @@ class JsonRpcClientTest extends \Guzzle\Tests\GuzzleTestCase
         $request = $this->client->notification('foo', array('bar'));
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Request', $request);
-        $this->assertSame(RequestInterface::POST, $request->getMethod());
-        $this->assertSame($this->base, $request->getUrl());
-        $this->assertSame(JsonRpcClientInterface::VERSION, $request->getRpcField('jsonrpc'));
-        $this->assertSame('foo', $request->getRpcField('method'));
-        $this->assertSame(array('bar'), $request->getRpcField('params'));
-        $this->assertNull($request->getRpcField('id'));
+        $this->assertEquals($this->base, $request->getUrl());
+        $this->assertEquals('2.0', $request->getRpcVersion());
+        $this->assertEquals('foo', $request->getRpcMethod());
+        $this->assertEquals(array('bar'), $request->getRpcParams());
+        $this->assertNull($request->getRpcId());
     }
 
     public function testNotificationWithUri()
@@ -83,12 +86,11 @@ class JsonRpcClientTest extends \Guzzle\Tests\GuzzleTestCase
         $request = $this->client->notification('foo', array(), 'bar');
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Request', $request);
-        $this->assertSame(RequestInterface::POST, $request->getMethod());
-        $this->assertSame($this->base . '/bar', $request->getUrl());
-        $this->assertSame(JsonRpcClientInterface::VERSION, $request->getRpcField('jsonrpc'));
-        $this->assertSame('foo', $request->getRpcField('method'));
-        $this->assertSame(array(), $request->getRpcField('params'));
-        $this->assertNull($request->getRpcField('id'));
+        $this->assertEquals($this->base . '/bar', $request->getUrl());
+        $this->assertEquals('2.0', $request->getRpcVersion());
+        $this->assertEquals('foo', $request->getRpcMethod());
+        $this->assertEquals(array(), $request->getRpcParams());
+        $this->assertNull($request->getRpcId());
     }
 
     public function testRequest()
@@ -96,12 +98,11 @@ class JsonRpcClientTest extends \Guzzle\Tests\GuzzleTestCase
         $request = $this->client->request('foo', 1);
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Request', $request);
-        $this->assertSame(RequestInterface::POST, $request->getMethod());
-        $this->assertSame($this->base, $request->getUrl());
-        $this->assertSame(JsonRpcClientInterface::VERSION, $request->getRpcField('jsonrpc'));
-        $this->assertSame('foo', $request->getRpcField('method'));
-        $this->assertSame(array(), $request->getRpcField('params'));
-        $this->assertSame(1, $request->getRpcField('id'));
+        $this->assertEquals($this->base, $request->getUrl());
+        $this->assertEquals('2.0', $request->getRpcVersion());
+        $this->assertEquals('foo', $request->getRpcMethod());
+        $this->assertEquals(array(), $request->getRpcParams());
+        $this->assertEquals(1, $request->getRpcId());
     }
 
     public function testRequestWithParams()
@@ -109,12 +110,11 @@ class JsonRpcClientTest extends \Guzzle\Tests\GuzzleTestCase
         $request = $this->client->request('foo', 1, array('bar'));
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Request', $request);
-        $this->assertSame(RequestInterface::POST, $request->getMethod());
-        $this->assertSame($this->base, $request->getUrl());
-        $this->assertSame(JsonRpcClientInterface::VERSION, $request->getRpcField('jsonrpc'));
-        $this->assertSame('foo', $request->getRpcField('method'));
-        $this->assertSame(array('bar'), $request->getRpcField('params'));
-        $this->assertSame(1, $request->getRpcField('id'));
+        $this->assertEquals($this->base, $request->getUrl());
+        $this->assertEquals('2.0', $request->getRpcVersion());
+        $this->assertEquals('foo', $request->getRpcMethod());
+        $this->assertEquals(array('bar'), $request->getRpcParams());
+        $this->assertEquals(1, $request->getRpcId());
     }
 
     public function testRequestWithUri()
@@ -122,11 +122,10 @@ class JsonRpcClientTest extends \Guzzle\Tests\GuzzleTestCase
         $request = $this->client->request('foo', 1, array(), 'bar');
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Request', $request);
-        $this->assertSame(RequestInterface::POST, $request->getMethod());
-        $this->assertSame($this->base . '/bar', $request->getUrl());
-        $this->assertSame(JsonRpcClientInterface::VERSION, $request->getRpcField('jsonrpc'));
-        $this->assertSame('foo', $request->getRpcField('method'));
-        $this->assertSame(array(), $request->getRpcField('params'));
-        $this->assertSame(1, $request->getRpcField('id'));
+        $this->assertEquals($this->base . '/bar', $request->getUrl());
+        $this->assertEquals('2.0', $request->getRpcVersion());
+        $this->assertEquals('foo', $request->getRpcMethod());
+        $this->assertEquals(array(), $request->getRpcParams());
+        $this->assertEquals(1, $request->getRpcId());
     }
 }

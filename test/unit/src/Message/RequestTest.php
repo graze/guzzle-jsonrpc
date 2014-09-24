@@ -2,414 +2,133 @@
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use Graze\Guzzle\JsonRpc\JsonRpcClientInterface;
+use Guzzle\Tests\GuzzleTestCase as TestCase;
 use Mockery as m;
 
-class RequestTest extends \Guzzle\Tests\GuzzleTestCase
+class RequestTest extends TestCase
 {
     public function setUp()
     {
-        $this->client = m::mock('Graze\\Guzzle\\JsonRpc\\JsonRpcClientInterface');
-        $this->decorated = m::mock('Guzzle\\Http\\Message\\RequestInterface');
-        $this->dispatcher = m::mock('Symfony\\Component\\EventDispatcher\\EventDispatcherInterface');
+        $this->url = 'http://graze.com/foo';
+        $this->client = m::mock('Guzzle\Http\ClientInterface');
+        $this->httpResponse = m::mock('Guzzle\\Http\\Message\\Response');
+
+        $this->request = new Request($this->url);
+        $this->request->setClient($this->client);
+    }
+
+    protected function jsonEncode($data)
+    {
+        return json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
     }
 
     public function testParent()
     {
-        $this->assertInstanceOf('Guzzle\\Http\\Message\\EntityEnclosingRequest', m::mock('Graze\\Guzzle\\JsonRpc\\Message\\Request'));
+        $this->assertInstanceOf('Guzzle\\Http\\Message\\EntityEnclosingRequest', $this->request);
     }
 
-    public function testInstance()
+    public function testGetUrl()
     {
-        $this->decorated->shouldReceive('getMethod')
-             ->once()
-             ->withNoArgs()
-             ->andReturn('BAR');
-        $this->decorated->shouldReceive('getUrl')
-             ->once()
-             ->withNoArgs();
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
-        $this->decorated->shouldReceive('getClient')
-             ->once()
-             ->withNoArgs()
-             ->andReturn($this->client);
-        $this->client->shouldReceive('getEventDispatcher')
-             ->once()
-             ->withNoArgs()
-             ->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener')
-             ->once()
-             ->with('request.error', m::type('array'), -255);
-
-        $request = new Request($this->decorated, 'foo');
-
-        $this->assertSame($this->client, $request->getClient());
-        $this->assertSame('BAR', $request->getMethod());
-        $this->assertSame('', $request->getUrl());
-        $this->assertSame(JsonRpcClientInterface::VERSION, $request->getRpcField('jsonrpc'));
-        $this->assertSame('foo', $request->getRpcField('method'));
-        $this->assertNull($request->getRpcField('params'));
-        $this->assertNull($request->getRpcField('id'));
+        $this->assertEquals($this->url, $this->request->getUrl());
     }
 
-    public function testInstanceWithId()
+    public function testGetRpcVersion()
     {
-        $this->decorated->shouldReceive('getMethod')
-             ->once()
-             ->withNoArgs()
-             ->andReturn('BAR');
-        $this->decorated->shouldReceive('getUrl')
-             ->once()
-             ->withNoArgs();
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
-        $this->decorated->shouldReceive('getClient')
-             ->once()
-             ->withNoArgs()
-             ->andReturn($this->client);
-        $this->client->shouldReceive('getEventDispatcher')
-             ->once()
-             ->withNoArgs()
-             ->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener')
-             ->once()
-             ->with('request.error', m::type('array'), -255);
-
-        $request = new Request($this->decorated, 'foo', 1);
-
-        $this->assertSame($this->client, $request->getClient());
-        $this->assertSame('BAR', $request->getMethod());
-        $this->assertSame('', $request->getUrl());
-        $this->assertSame(JsonRpcClientInterface::VERSION, $request->getRpcField('jsonrpc'));
-        $this->assertSame('foo', $request->getRpcField('method'));
-        $this->assertNull($request->getRpcField('params'));
-        $this->assertSame(1, $request->getRpcField('id'));
-    }
-
-    public function testInstanceWithUrl()
-    {
-        $this->decorated->shouldReceive('getMethod')
-             ->once()
-             ->withNoArgs()
-             ->andReturn('BAR');
-        $this->decorated->shouldReceive('getUrl')
-             ->once()
-             ->withNoArgs()
-             ->andReturn('http://graze.com/foo');
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
-        $this->decorated->shouldReceive('getClient')
-             ->once()
-             ->withNoArgs()
-             ->andReturn($this->client);
-        $this->client->shouldReceive('getEventDispatcher')
-             ->once()
-             ->withNoArgs()
-             ->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener')
-             ->once()
-             ->with('request.error', m::type('array'), -255);
-
-        $request = new Request($this->decorated, 'foo');
-
-        $this->assertSame($this->client, $request->getClient());
-        $this->assertSame('BAR', $request->getMethod());
-        $this->assertSame('http://graze.com/foo', $request->getUrl());
-        $this->assertSame(JsonRpcClientInterface::VERSION, $request->getRpcField('jsonrpc'));
-        $this->assertSame('foo', $request->getRpcField('method'));
-        $this->assertNull($request->getRpcField('params'));
-        $this->assertNull($request->getRpcField('id'));
+        $this->assertEquals('2.0', $this->request->getRpcVersion());
     }
 
     public function testSend()
     {
-        $response = m::mock('Guzzle\\Http\\Message\\Response');
+        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo');
+        $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
 
-        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
-        $this->decorated->shouldReceive('getHeaders');
-        $this->decorated->shouldReceive('getMethod');
-        $this->decorated->shouldReceive('getUrl');
-        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener');
+        $this->request->setRpcMethod('foo');
+        $response = $this->request->send();
 
-        $request = new Request($this->decorated, 'foo');
-        $this->client->shouldReceive('send')
-             ->once()
-             ->with($request)
-             ->andReturn($response);
-
-        $this->assertNull($request->send());
-
-        $json = json_encode($request->getRpcFields(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
-        $this->assertSame($json, (string) $request->getBody());
-        $this->assertSame(array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'method'  => 'foo'
-        ), $request->getRpcFields());
+        $this->assertNull($response);
+        $this->assertSame($this->jsonEncode($requestData), (string) $this->request->getBody());
     }
 
-    public function testSendWithIdAndSuccessfulResponse()
+    public function testSendWithId()
     {
-        $response = m::mock('Guzzle\\Http\\Message\\Response');
-        $response->shouldReceive('getStatusCode')
-            ->once()
-            ->withNoArgs()
-            ->andReturn(200);
-        $response->shouldReceive('getHeaders')
-            ->once()
-            ->withNoArgs()
-            ->andReturn(array());
-        $response->shouldReceive('json')
-            ->once()
-            ->withNoArgs()
-            ->andReturn(array('jsonrpc' => '2.0', 'id' => 1, 'result' => array('foo')));
+        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
+        $responseData = array('jsonrpc'=>'2.0', 'result'=>array('foo'), 'id'=>1);
+        $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
+        $this->httpResponse->shouldReceive('json')->once()->withNoArgs()->andReturn($responseData);
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs();
 
-        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
-        $this->decorated->shouldReceive('getHeaders');
-        $this->decorated->shouldReceive('getMethod');
-        $this->decorated->shouldReceive('getUrl');
-        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener');
+        $this->request->setRpcMethod('foo');
+        $this->request->setRpcId(1);
+        $response = $this->request->send();
 
-        $request = new Request($this->decorated, 'foo', 1);
-        $this->client->shouldReceive('send')
-             ->once()
-             ->with($request)
-             ->andReturn($response);
-
-        $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Response', $request->send());
-
-        $json = json_encode($request->getRpcFields(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
-        $this->assertSame($json, (string) $request->getBody());
-        $this->assertSame(array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'method'  => 'foo',
-            'id'      => 1
-        ), $request->getRpcFields());
+        $this->assertInstanceOf('Graze\Guzzle\JsonRpc\Message\Response', $response);
+        $this->assertSame($this->jsonEncode($requestData), (string) $this->request->getBody());
     }
 
     public function testSendWithIdAndNullResult()
     {
-        $mockResponse = m::mock('Guzzle\\Http\\Message\\Response');
+        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
+        $responseData = array('jsonrpc'=>'2.0', 'result'=>null, 'id'=>1);
+        $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
+        $this->httpResponse->shouldReceive('json')->once()->withNoArgs()->andReturn($responseData);
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs();
 
-        $mockResponse->shouldReceive('getStatusCode')
-            ->once()
-            ->withNoArgs()
-            ->andReturn(200);
+        $this->request->setRpcMethod('foo');
+        $this->request->setRpcId(1);
+        $response = $this->request->send();
 
-        $mockResponse->shouldReceive('getHeaders')
-            ->once()
-            ->withNoArgs()
-            ->andReturn(array());
-
-        $requestId = rand(1,100);
-        $mockResponse->shouldReceive('json')
-            ->once()
-            ->withNoArgs()
-            ->andReturn(array(
-                    'jsonrpc' => '2.0',
-                    'id' => $requestId,
-                    'result' => null
-                ));
-
-        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
-        $this->decorated->shouldReceive('getHeaders');
-        $this->decorated->shouldReceive('getMethod');
-        $this->decorated->shouldReceive('getUrl');
-        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener');
-
-        $request = new Request($this->decorated, 'foo', $requestId);
-        $this->client->shouldReceive('send')
-            ->once()
-            ->with($request)
-            ->andReturn($mockResponse);
-
-        $this->assertInstanceOf("Graze\\Guzzle\\JsonRpc\\Message\\Response", $request->send());
+        $this->assertInstanceOf('Graze\Guzzle\JsonRpc\Message\Response', $response);
+        $this->assertSame($this->jsonEncode($requestData), (string) $this->request->getBody());
     }
 
-    public function testSendWithIdAndErrorResponse()
+    public function testSendWithIdAndErrorResult()
     {
-        $response = m::mock('Guzzle\\Http\\Message\\Response');
-        $response->shouldReceive('getStatusCode')
-            ->once()
-            ->withNoArgs()
-            ->andReturn(200);
-        $response->shouldReceive('getHeaders')
-            ->once()
-            ->withNoArgs()
-            ->andReturn(array());
-        $response->shouldReceive('json')
-            ->once()
-            ->withNoArgs()
-            ->andReturn(array(
-                'jsonrpc' => '2.0',
-                'id' => 1,
-                'error' => array('code' => ErrorResponse::INVALID_REQUEST, 'message' => 'foo')
-            ));
+        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
+        $responseData = array('jsonrpc'=>'2.0', 'id'=>1, 'error'=>array('message'=>'', 'code'=>0));
+        $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
+        $this->httpResponse->shouldReceive('json')->once()->withNoArgs()->andReturn($responseData);
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs();
 
-        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
-        $this->decorated->shouldReceive('getHeaders');
-        $this->decorated->shouldReceive('getMethod');
-        $this->decorated->shouldReceive('getUrl');
-        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener');
+        $this->request->setRpcMethod('foo');
+        $this->request->setRpcId(1);
+        $response = $this->request->send();
 
-        $request = new Request($this->decorated, 'foo', 1);
-        $this->client->shouldReceive('send')
-             ->once()
-             ->with($request)
-             ->andReturn($response);
-
-        $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\ErrorResponse', $request->send());
-
-        $json = json_encode($request->getRpcFields(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
-        $this->assertSame($json, (string) $request->getBody());
-        $this->assertSame(array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'method'  => 'foo',
-            'id'      => 1
-        ), $request->getRpcFields());
+        $this->assertInstanceOf('Graze\Guzzle\JsonRpc\Message\ErrorResponse', $response);
+        $this->assertSame($this->jsonEncode($requestData), (string) $this->request->getBody());
     }
 
     public function testSendWithIdThrowsIfResponseDoesNotMatch()
     {
-        $response = m::mock('Guzzle\\Http\\Message\\Response');
-        $response->shouldReceive('json')
-            ->once()
-            ->withNoArgs()
-            ->andReturn(array(
-                'jsonrpc' => '2.0',
-                'id' => 2,
-                'error' => array('code' => ErrorResponse::INVALID_REQUEST, 'message' => 'foo')
-            ));
+        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
+        $responseData = array('jsonrpc'=>'2.0', 'result'=>array('foo'), 'id'=>2);
+        $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
+        $this->httpResponse->shouldReceive('json')->once()->withNoArgs()->andReturn($responseData);
 
-        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
-        $this->decorated->shouldReceive('getHeaders');
-        $this->decorated->shouldReceive('getMethod');
-        $this->decorated->shouldReceive('getUrl');
-        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener');
-
-        $request = new Request($this->decorated, 'foo', 1);
-        $this->client->shouldReceive('send')
-             ->once()
-             ->with($request)
-             ->andReturn($response);
+        $this->request->setRpcMethod('foo');
+        $this->request->setRpcId(1);
 
         $this->setExpectedException('RuntimeException');
-        $request->send();
+        $response = $this->request->send();
     }
 
     public function testSendWithParams()
     {
-        $response = m::mock('Guzzle\\Http\\Message\\Response');
+        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1, 'params'=>array('foo'));
+        $responseData = array('jsonrpc'=>'2.0', 'result'=>array('foo'), 'id'=>1);
+        $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
+        $this->httpResponse->shouldReceive('json')->once()->withNoArgs()->andReturn($responseData);
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs();
 
-        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
-        $this->decorated->shouldReceive('getHeaders');
-        $this->decorated->shouldReceive('getMethod');
-        $this->decorated->shouldReceive('getUrl');
-        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener');
+        $this->request->setRpcMethod('foo');
+        $this->request->setRpcId(1);
+        $this->request->setRpcParams(array('foo'));
+        $response = $this->request->send();
 
-        $request = new Request($this->decorated, 'foo');
-        $request->setRpcField('params', array('bar' => 'baz'));
-        $this->client->shouldReceive('send')
-             ->once()
-             ->with($request)
-             ->andReturn($response);
-
-        $this->assertNull($request->send());
-
-        $json = json_encode($request->getRpcFields(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
-        $this->assertSame($json, (string) $request->getBody());
-        $this->assertSame(array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'method'  => 'foo',
-            'params'  => array('bar' => 'baz')
-        ), $request->getRpcFields());
-    }
-
-    public function testGetRpcField()
-    {
-        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
-        $this->decorated->shouldReceive('getHeaders');
-        $this->decorated->shouldReceive('getMethod');
-        $this->decorated->shouldReceive('getUrl');
-        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener');
-
-        $request = new Request($this->decorated, 'foo');
-        $this->assertSame('foo', $request->getRpcField('method'));
-    }
-
-    public function testGetRpcFieldWithInvalidName()
-    {
-        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
-        $this->decorated->shouldReceive('getHeaders');
-        $this->decorated->shouldReceive('getMethod');
-        $this->decorated->shouldReceive('getUrl');
-        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener');
-
-        $request = new Request($this->decorated, 'foo');
-        $this->assertNull($request->getRpcField('foo'));
-    }
-
-    public function testGetRpcFields()
-    {
-        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
-        $this->decorated->shouldReceive('getHeaders');
-        $this->decorated->shouldReceive('getMethod');
-        $this->decorated->shouldReceive('getUrl');
-        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener');
-
-        $request = new Request($this->decorated, 'foo');
-        $this->assertSame(array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'method'  => 'foo'
-        ), $request->getRpcFields());
-    }
-
-    public function testSetRpcFieldAddsNew()
-    {
-        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
-        $this->decorated->shouldReceive('getHeaders');
-        $this->decorated->shouldReceive('getMethod');
-        $this->decorated->shouldReceive('getUrl');
-        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener');
-
-        $request = new Request($this->decorated, 'foo');
-        $request->setRpcField('foo', 'bar');
-        $this->assertSame(array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'method'  => 'foo',
-            'foo'     => 'bar'
-        ), $request->getRpcFields());
-    }
-
-    public function testSetRpcFieldOverwrites()
-    {
-        $this->decorated->shouldReceive('getClient')->andReturn($this->client);
-        $this->decorated->shouldReceive('getHeaders');
-        $this->decorated->shouldReceive('getMethod');
-        $this->decorated->shouldReceive('getUrl');
-        $this->client->shouldReceive('getEventDispatcher')->andReturn($this->dispatcher);
-        $this->dispatcher->shouldReceive('addListener');
-
-        $request = new Request($this->decorated, 'foo');
-        $request->setRpcField('method', 'bar');
-        $this->assertSame(array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'method'  => 'bar'
-        ), $request->getRpcFields());
+        $this->assertInstanceOf('Graze\Guzzle\JsonRpc\Message\Response', $response);
+        $this->assertSame($this->jsonEncode($requestData), (string) $this->request->getBody());
     }
 }

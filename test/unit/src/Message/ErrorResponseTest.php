@@ -2,13 +2,14 @@
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use Graze\Guzzle\JsonRpc\JsonRpcClientInterface;
+use Guzzle\Tests\GuzzleTestCase as TestCase;
 use Mockery as m;
 
-class ErrorResponseTest extends \Guzzle\Tests\GuzzleTestCase
+class ErrorResponseTest extends TestCase
 {
     public function setUp()
     {
-        $this->decorated = m::mock('Guzzle\\Http\\Message\\Response');
+        $this->httpResponse = m::mock('Guzzle\\Http\\Message\\Response');
     }
 
     public function testInterface()
@@ -23,140 +24,106 @@ class ErrorResponseTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function testWithValidData()
     {
-        $this->decorated->shouldReceive('getStatusCode')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(200);
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
 
-        $response = new ErrorResponse($this->decorated, $data = array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'error'   => array(
-                'code'    => ErrorResponse::INVALID_REQUEST,
+        $responseData = array(
+            'jsonrpc' => '2.0',
+            'error' => array(
+                'code' => ErrorResponse::INVALID_REQUEST,
                 'message' => 'foo'
             ),
-            'id'      => 1
-        ));
+            'id' => 1
+        );
 
-        $this->assertSame($data['jsonrpc'], $response->getVersion());
-        $this->assertSame($data['id'],      $response->getId());
+        $response = new ErrorResponse($this->httpResponse, $responseData);
 
-        $this->assertSame($data['error']['code'], $response->getCode());
+        $this->assertSame($responseData['jsonrpc'], $response->getVersion());
+        $this->assertSame($responseData['id'], $response->getId());
+        $this->assertSame($responseData['error']['code'], $response->getCode());
         $this->assertNull($response->getData());
-        $this->assertSame($data['error']['message'], $response->getMessage());
+        $this->assertSame($responseData['error']['message'], $response->getMessage());
     }
 
     public function testWithValidErrorData()
     {
-        $this->decorated->shouldReceive('getStatusCode')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(200);
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
 
-        $response = new ErrorResponse($this->decorated, $data = array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'error'   => array(
-                'code'    => ErrorResponse::INVALID_REQUEST,
+        $responseData = array(
+            'jsonrpc' => '2.0',
+            'error' => array(
+                'code' => ErrorResponse::INVALID_REQUEST,
                 'message' => 'foo',
-                'data'    => array('bar' => 'baz')
+                'data' => array('bar' => 'baz')
             ),
-            'id'      => 1
-        ));
+            'id' => 1
+        );
 
-        $this->assertSame($data['jsonrpc'], $response->getVersion());
-        $this->assertSame($data['id'],      $response->getId());
+        $response = new ErrorResponse($this->httpResponse, $responseData);
 
-        $this->assertSame($data['error']['code'], $response->getCode());
-        $this->assertSame($data['error']['data'], $response->getData());
-        $this->assertSame($data['error']['message'], $response->getMessage());
+        $this->assertSame($responseData['jsonrpc'], $response->getVersion());
+        $this->assertSame($responseData['id'], $response->getId());
+        $this->assertSame($responseData['error']['code'], $response->getCode());
+        $this->assertSame($responseData['error']['data'], $response->getData());
+        $this->assertSame($responseData['error']['message'], $response->getMessage());
     }
 
     public function testWithNoError()
     {
-        $this->decorated->shouldReceive('getStatusCode')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(200);
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
 
         $this->setExpectedException('OutOfRangeException');
 
-        $response = new ErrorResponse($this->decorated, $data = array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'id'      => 1
+        $response = new ErrorResponse($this->httpResponse, array(
+            'jsonrpc' => '2.0',
+            'id' => 1
         ));
     }
 
     public function testWithNoErrorCode()
     {
-        $this->decorated->shouldReceive('getStatusCode')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(200);
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
 
         $this->setExpectedException('OutOfRangeException');
 
-        $response = new ErrorResponse($this->decorated, $data = array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'error'   => array(
+        $response = new ErrorResponse($this->httpResponse, array(
+            'jsonrpc' => '2.0',
+            'error' => array(
                 'message' => 'foo'
             ),
-            'id'      => 1
+            'id' => 1
         ));
     }
 
     public function testWithInvalidCode()
     {
-        $this->decorated->shouldReceive('getStatusCode')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(200);
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
 
         $this->setExpectedException('OutOfBoundsException');
 
-        $response = new ErrorResponse($this->decorated, $data = array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'error'   => array(
-                'code'    => 'foo',
+        $response = new ErrorResponse($this->httpResponse, array(
+            'jsonrpc' => '2.0',
+            'error' => array(
+                'code' => 'foo',
                 'message' => 'bar'
             ),
-            'id'      => 1
+            'id' => 1
         ));
     }
 
     public function testWithNoErrorMessage()
     {
-        $this->decorated->shouldReceive('getStatusCode')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(200);
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
 
         $this->setExpectedException('OutOfRangeException');
 
-        $response = new ErrorResponse($this->decorated, $data = array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
+        $response = new ErrorResponse($this->httpResponse, array(
+            'jsonrpc' => '2.0',
             'error'   => array(
                 'code'    => ErrorResponse::INVALID_REQUEST
             ),
@@ -166,19 +133,13 @@ class ErrorResponseTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function testWithNoId()
     {
-        $this->decorated->shouldReceive('getStatusCode')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(200);
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
 
         $this->setExpectedException('OutOfRangeException');
 
-        $response = new ErrorResponse($this->decorated, $data = array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
+        $response = new ErrorResponse($this->httpResponse, array(
+            'jsonrpc' => '2.0',
             'error'   => array(
                 'code'    => ErrorResponse::INVALID_REQUEST,
                 'message' => 'foo'
@@ -188,18 +149,12 @@ class ErrorResponseTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function testWithNoVersion()
     {
-        $this->decorated->shouldReceive('getStatusCode')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(200);
-        $this->decorated->shouldReceive('getHeaders')
-             ->once()
-             ->withNoArgs()
-             ->andReturn(array());
+        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
 
         $this->setExpectedException('OutOfRangeException');
 
-        $response = new ErrorResponse($this->decorated, $data = array(
+        $response = new ErrorResponse($this->httpResponse, array(
             'error'   => array(
                 'code'    => ErrorResponse::INVALID_REQUEST,
                 'message' => 'foo'

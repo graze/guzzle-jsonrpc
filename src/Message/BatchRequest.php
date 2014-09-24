@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Guzzle JsonRpc
+ * This file is part of Guzzle JSON-RPC
  *
  * Copyright (c) 2014 Nature Delivered Ltd. <http://graze.com>
  *
@@ -12,31 +12,15 @@
  */
 namespace Graze\Guzzle\JsonRpc\Message;
 
-use Guzzle\Http\Message\EntityEnclosingRequest;
-use Guzzle\Http\Message\RequestInterface;
 use LogicException;
 use RuntimeException;
 
-class BatchRequest extends EntityEnclosingRequest
+class BatchRequest extends AbstractRequest
 {
     /**
      * @var Request[]
      */
     protected $requests = array();
-
-    /**
-     * @param RequestInterface $request
-     * @param Request[] $requests
-     */
-    public function __construct(RequestInterface $request, array $requests)
-    {
-        parent::__construct($request->getMethod(), $request->getUrl(), $request->getHeaders());
-
-        $this->setClient($request->getClient());
-        foreach ($requests as $request) {
-            $this->addRequest($request);
-        }
-    }
 
     /**
      * @return Response
@@ -46,11 +30,11 @@ class BatchRequest extends EntityEnclosingRequest
         $responses = array();
         $this->setBody($this->jsonEncode($this->joinRequests($this->requests)));
 
-        $batch = parent::send();
+        $batch = $this->sendEntityEnclosingRequest();
         $map = $this->mapResponses($batch->json());
 
         foreach ($this->requests as $request) {
-            $id = $request->getRpcField('id');
+            $id = $request->getRpcId();
 
             if (null !== $id) {
                 if (!isset($map[$id])) {
@@ -58,7 +42,12 @@ class BatchRequest extends EntityEnclosingRequest
                 }
 
                 $data = $map[$id];
-                $responses[] = array_key_exists('result', $data) ? new Response($batch, $data) : new ErrorResponse($batch, $data);
+
+                if (!array_key_exists('result', $data)) {
+                    $responses[] = new ErrorResponse($batch, $data);
+                } else {
+                    $responses[] = new Response($batch, $data);
+                }
             }
         }
 
@@ -66,11 +55,23 @@ class BatchRequest extends EntityEnclosingRequest
     }
 
     /**
-     * @param Request $request
+     * @param RequestInterface $request
      */
-    public function addRequest(Request $request)
+    public function addRequest(RequestInterface $request)
     {
         $this->requests[] = $request;
+    }
+
+    /**
+     * @param RequestInterface[] $requests
+     */
+    public function setRequests(array $requests)
+    {
+        $this->requests = array();
+
+        foreach ($requests as $request) {
+            $this->addRequest($request);
+        }
     }
 
     /**
@@ -81,26 +82,19 @@ class BatchRequest extends EntityEnclosingRequest
     {
         $ids = array();
 
-        return array_map(function(Request $request) use(&$ids) {
-            if ($request->getRpcField('id') !== null) {
-                if (isset($ids[$request->getRpcField('id')])) {
-                    throw new LogicException('Duplicate request ID "' . $request->getRpcField('id') . '".');
+        return array_map(function (RequestInterface $request) use (&$ids) {
+            $id = $request->getRpcId();
+
+            if (null !== $id) {
+                if (isset($ids[$id])) {
+                    throw new LogicException('Duplicate request ID "' . $id . '".');
                 }
 
-                $ids[$request->getRpcField('id')] = true;
+                $ids[$id] = true;
             }
 
-            return $request->getRpcFields();
+            return $request->getRpcData();
         }, $requests);
-    }
-
-    /**
-     * @param mixed $data
-     * @return string
-     */
-    protected function jsonEncode($data)
-    {
-        return json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
     }
 
     /**

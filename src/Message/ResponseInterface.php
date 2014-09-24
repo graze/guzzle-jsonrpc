@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Guzzle JsonRpc
+ * This file is part of Guzzle JSON-RPC
  *
  * Copyright (c) 2014 Nature Delivered Ltd. <http://graze.com>
  *

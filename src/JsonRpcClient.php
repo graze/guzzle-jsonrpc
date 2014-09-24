@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Guzzle JsonRpc
+ * This file is part of Guzzle JSON-RPC
  *
  * Copyright (c) 2014 Nature Delivered Ltd. <http://graze.com>
  *
@@ -12,10 +12,9 @@
  */
 namespace Graze\Guzzle\JsonRpc;
 
-use Graze\Guzzle\JsonRpc\Message\BatchRequest;
-use Graze\Guzzle\JsonRpc\Message\Request;
+use Graze\Guzzle\JsonRpc\Message\RequestFactory;
+use Graze\Guzzle\JsonRpc\Message\RequestInterface;
 use Guzzle\Service\Client;
-use Guzzle\Http\Message\RequestInterface;
 
 class JsonRpcClient extends Client implements JsonRpcClientInterface
 {
@@ -26,6 +25,7 @@ class JsonRpcClient extends Client implements JsonRpcClientInterface
     {
         parent::__construct($baseUrl, $config);
 
+        $this->setRequestFactory($this->getDefaultRequestFactory());
         $this->setDefaultHeaders(array(
             'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3'
         ));
@@ -36,9 +36,10 @@ class JsonRpcClient extends Client implements JsonRpcClientInterface
      */
     public function batch(array $requests, $uri = null, array $headers = array())
     {
-        return $this->prepareRequest(
-            new BatchRequest($this->createRequest(RequestInterface::POST, $uri, $headers), $requests)
-        );
+        $request = $this->createRequest(RequestInterface::BATCH, $uri, $headers);
+        $request->setRequests($requests);
+
+        return $request;
     }
 
     /**
@@ -46,10 +47,9 @@ class JsonRpcClient extends Client implements JsonRpcClientInterface
      */
     public function notification($method, array $params = array(), $uri = null, array $headers = array())
     {
-        $request = new Request($this->createRequest(RequestInterface::POST, $uri, $headers), $method);
-        $request->setRpcField('params', $params);
-
-        $this->prepareRequest($request);
+        $request = $this->createRequest(RequestInterface::NOTIFICATION, $uri, $headers);
+        $request->setRpcMethod($method);
+        $request->setRpcParams($params);
 
         return $request;
     }
@@ -59,11 +59,19 @@ class JsonRpcClient extends Client implements JsonRpcClientInterface
      */
     public function request($method, $id, array $params = array(), $uri = null, array $headers = array())
     {
-        $request = new Request($this->createRequest(RequestInterface::POST, $uri, $headers), $method, $id);
-        $request->setRpcField('params', $params);
-
-        $this->prepareRequest($request);
+        $request = $this->createRequest(RequestInterface::REQUEST, $uri, $headers);
+        $request->setRpcMethod($method);
+        $request->setRpcParams($params);
+        $request->setRpcId($id);
 
         return $request;
+    }
+
+    /**
+     * @return RequestFactory
+     */
+    protected function getDefaultRequestFactory()
+    {
+        return new RequestFactory();
     }
 }

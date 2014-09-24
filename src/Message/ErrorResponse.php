@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Guzzle JsonRpc
+ * This file is part of Guzzle JSON-RPC
  *
  * Copyright (c) 2014 Nature Delivered Ltd. <http://graze.com>
  *
@@ -45,6 +45,7 @@ class ErrorResponse extends BaseResponse implements ResponseInterface
     public function __construct(BaseResponse $response, array $data)
     {
         parent::__construct($response->getStatusCode(), $response->getHeaders());
+
         $this->rpcError  = new Collection(isset($data['error']) ? $data['error'] : array());
         $this->rpcFields = new Collection($data);
 
@@ -82,7 +83,7 @@ class ErrorResponse extends BaseResponse implements ResponseInterface
     }
 
     /**
-     * @return integer
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -98,13 +99,12 @@ class ErrorResponse extends BaseResponse implements ResponseInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getVersion()
     {
         return $this->rpcFields->get('jsonrpc');
     }
-
 
     /**
      * @param integer $code

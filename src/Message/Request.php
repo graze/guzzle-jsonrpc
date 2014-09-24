@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Guzzle JsonRpc
+ * This file is part of Guzzle JSON-RPC
  *
  * Copyright (c) 2014 Nature Delivered Ltd. <http://graze.com>
  *
@@ -15,10 +15,10 @@ namespace Graze\Guzzle\JsonRpc\Message;
 use Graze\Guzzle\JsonRpc\JsonRpcClientInterface;
 use Guzzle\Common\Collection;
 use Guzzle\Http\Message\EntityEnclosingRequest;
-use Guzzle\Http\Message\RequestInterface;
+use OutOfBoundsException;
 use RuntimeException;
 
-class Request extends EntityEnclosingRequest
+class Request extends AbstractRequest implements RequestInterface
 {
     /**
      * @var Collection
@@ -26,77 +26,109 @@ class Request extends EntityEnclosingRequest
     protected $rpcFields;
 
     /**
-     * @param RequestInterface $request
-     * @param string $method
-     * @param integer $id
+     * @param string $url
+     * @param array|Collection $headers
      */
-    public function __construct(RequestInterface $request, $method, $id = null)
+    public function __construct($url, $headers = array())
     {
-        parent::__construct($request->getMethod(), $request->getUrl(), $request->getHeaders());
+        parent::__construct($url, $headers);
 
-        $client = $request->getClient();
-        $this->setClient($client);
-        $this->setEventDispatcher($client->getEventDispatcher());
-        $this->rpcFields = new Collection(array(
-            'jsonrpc' => JsonRpcClientInterface::VERSION,
-            'method'  => (string) $method
-        ));
-
-        if (null !== $id) {
-            $this->setRpcField('id', $id);
-        }
+        $this->rpcFields = new Collection();
+        $this->setRpcVersion(JsonRpcClientInterface::VERSION);
     }
 
     /**
-     * @return Response
+     * @return Response|null
      */
     public function send()
     {
-        $this->setBody($this->jsonEncode($this->getRpcFields()), 'application/json');
-        $response = parent::send();
+        $this->setBody($this->jsonEncode($this->getRpcData()), self::CONTENT_TYPE);
+        $id = $this->getRpcId();
+        $response = $this->sendEntityEnclosingRequest();
 
-        if ($this->rpcFields->hasKey('id')) {
+        if (null !== $id) {
             $data = $response->json();
-            if (!isset($data['id']) || $this->getRpcField('id') !== $data['id']) {
-                throw new RuntimeException('Response with ID "' . $this->getRpcField('id') . '" expected.');
+            if (!isset($data['id']) || $id !== $data['id']) {
+                throw new RuntimeException('Response with ID "' . $id . '" expected.');
             }
 
-            return array_key_exists('result', $data) ? new Response($response, $data) : new ErrorResponse($response, $data);
+            if (!array_key_exists('result', $data)) {
+                return new ErrorResponse($response, $data);
+            }
+
+            return new Response($response, $data);
         }
     }
 
     /**
-     * @param string $key
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getRpcField($key)
-    {
-        return $this->rpcFields->get($key);
-    }
-
-    /**
-     * @return array
-     */
-    public function getRpcFields()
+    public function getRpcData()
     {
         return $this->rpcFields->getAll();
     }
 
     /**
-     * @param string $key
-     * @param mixed $value
+     * {@inheritdoc}
      */
-    public function setRpcField($key, $value)
+    public function getRpcId()
     {
-        return $this->rpcFields->set($key, $value);
+        return $this->rpcFields->get('id');
     }
 
     /**
-     * @param mixed $data
-     * @return string
+     * {@inheritdoc}
      */
-    protected function jsonEncode($data)
+    public function setRpcId($id)
     {
-        return json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+        $this->rpcFields->set('id', $id);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRpcMethod()
+    {
+        return $this->rpcFields->get('method');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRpcMethod($method)
+    {
+        $this->rpcFields->set('method', (string) $method);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRpcParams()
+    {
+        return $this->rpcFields->get('params');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRpcParams(array $params)
+    {
+        $this->rpcFields->set('params', $params);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRpcVersion()
+    {
+        return $this->rpcFields->get('jsonrpc');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRpcVersion($version)
+    {
+        $this->rpcFields->set('jsonrpc', (string) $version);
     }
 }
