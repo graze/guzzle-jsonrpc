@@ -1,6 +1,5 @@
-# Guzzle JSON-RPC #
+# Guzzle JSON-RPC
 
-**Version:** `0.4.x`<br/>
 **Master build:** [![Master branch build status][travis-master]][travis]
 
 This library implements [JSON-RPC 2.0][jsonrpc] for the [Guzzle v3 HTTP client][guzzle].<br/>
@@ -13,7 +12,7 @@ It can be installed in whichever way you prefer, but we recommend [Composer][pac
 }
 ```
 
-### Basic usage ###
+## Documentation
 ```php
 <?php
 use Graze\Guzzle\JsonRpc\JsonRpcClient;
