@@ -1,81 +1,124 @@
 <?php
-namespace Graze\Guzzle\JsonRpc\Message;
+/*
+ * This file is part of Guzzle HTTP JSON-RPC
+ *
+ * Copyright (c) 2014 Nature Delivered Ltd. <http://graze.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
+ * @link http://github.com/graze/guzzle-jsonrpc
+ */
+namespace Graze\GuzzleHttp\JsonRpc\Message;
 
-use Graze\Guzzle\JsonRpc\JsonRpcClientInterface;
-use Guzzle\Tests\GuzzleTestCase as TestCase;
-use Mockery as m;
+use Graze\GuzzleHttp\JsonRpc\ClientInterface;
+use Graze\GuzzleHttp\JsonRpc\Test\UnitTestCase;
 
-class ResponseTest extends TestCase
+class ResponseTest extends UnitTestCase
 {
     public function setUp()
     {
-        $this->httpResponse = m::mock('Guzzle\\Http\\Message\\Response');
+        $this->stream = $this->mockStream();
     }
 
     public function testInterface()
     {
-        $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\ResponseInterface', m::mock('Graze\\Guzzle\\JsonRpc\\Message\\Response'));
+        $this->assertInstanceOf('GuzzleHttp\Message\ResponseInterface', new Response(200));
     }
 
-    public function testParent()
+    public function testGetRpcId()
     {
-        $this->assertInstanceOf('Guzzle\\Http\\Message\\Response', m::mock('Graze\\Guzzle\\JsonRpc\\Message\\Response'));
+        $response = new Response(200);
+        $response->setBody($this->stream);
+
+        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+            'id' => 123
+        ]));
+
+        $this->assertEquals(123, $response->getRpcId());
     }
 
-    public function testWithValidData()
+    public function testGetRpcIdIsNull()
     {
-        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
-        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
+        $response = new Response(200);
 
-        $responseData = array(
-            'jsonrpc' => '2.0',
-            'result' => array('foo', 'bar'),
-            'id' => 1
-        );
-
-        $response = new Response($this->httpResponse, $responseData);
-
-        $this->assertSame($responseData['jsonrpc'], $response->getVersion());
-        $this->assertSame($responseData['result'], $response->getResult());
-        $this->assertSame($responseData['id'], $response->getId());
+        $this->assertNull($response->getRpcId());
     }
 
-    public function testWithNoId()
+    public function testGetRpcErrorCode()
     {
-        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
-        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
+        $response = new Response(200);
+        $response->setBody($this->stream);
 
-        $this->setExpectedException('OutOfRangeException');
+        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+            'error' => ['code'=>123]
+        ]));
 
-        $response = new Response($this->httpResponse, array(
-            'jsonrpc' => '2.0',
-            'result' => array('foo', 'bar')
-        ));
+        $this->assertEquals(123, $response->getRpcErrorCode());
     }
 
-    public function testWithNoResult()
+    public function testGetRpcErrorCodeIsNull()
     {
-        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
-        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
+        $response = new Response(200);
 
-        $this->setExpectedException('OutOfRangeException');
-
-        $response = new Response($this->httpResponse, array(
-            'jsonrpc' => '2.0',
-            'id' => 1
-        ));
+        $this->assertNull($response->getRpcErrorCode());
     }
 
-    public function testWithNoVersion()
+    public function testGetRpcErrorMessage()
     {
-        $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
-        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
+        $response = new Response(200);
+        $response->setBody($this->stream);
 
-        $this->setExpectedException('OutOfRangeException');
+        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+            'error' => ['message'=>'foo']
+        ]));
 
-        $response = new Response($this->httpResponse, array(
-            'result' => array('foo', 'bar'),
-            'id' => 1
-        ));
+        $this->assertEquals('foo', $response->getRpcErrorMessage());
+    }
+
+    public function testGetRpcErrorMessageIsNull()
+    {
+        $response = new Response(200);
+
+        $this->assertNull($response->getRpcErrorCode());
+    }
+
+    public function testGetRpcResult()
+    {
+        $response = new Response(200);
+        $response->setBody($this->stream);
+
+        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+            'result' => 'foo'
+        ]));
+
+        $this->assertEquals('foo', $response->getRpcResult());
+    }
+
+    public function testGetRpcResultIsNull()
+    {
+        $response = new Response(200);
+
+        $this->assertNull($response->getRpcResult());
+    }
+
+    public function testGetRpcVersion()
+    {
+        $response = new Response(200);
+        $response->setBody($this->stream);
+
+        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+            'jsonrpc' => 'foo'
+        ]));
+
+        $this->assertEquals('foo', $response->getRpcVersion());
+    }
+
+    public function testGetRpcVersionIsNull()
+    {
+        $response = new Response(200);
+
+        $this->assertNull($response->getRpcVersion());
     }
 }
