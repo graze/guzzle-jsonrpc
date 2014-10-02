@@ -1,3 +1,4 @@
+.pid
 .vagrant
 composer.lock
 phpunit.xml
