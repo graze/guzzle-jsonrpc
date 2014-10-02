@@ -88,7 +88,7 @@ class BatchSubscriber implements SubscriberInterface
 
         foreach ($this->transactions as $transaction) {
             $request = $transaction->getRequest();
-            if ($request instanceof RequestInterface && null !== $request->getRpcId()) {
+            if ($response && $request instanceof RequestInterface && null !== $request->getRpcId()) {
                 $transaction->setResponse($response);
             }
 
