@@ -1,13 +1,19 @@
 # Guzzle JSON-RPC
 
-**Master build:** [![Master branch build status][travis-master]][travis]
+[![Master branch build status][ico-build]][travis]
+[![Published version][ico-package]][package]
+[![PHP ~5.4][ico-engine]][lang]
+[![MIT Licensed][ico-license]][license]
 
-This library implements [JSON-RPC 2.0][jsonrpc] for the [Guzzle v3 HTTP client][guzzle].<br/>
-It can be installed in whichever way you prefer, but we recommend [Composer][packagist].
+This library implements [JSON-RPC 2.0][jsonrpc] for the
+[GuzzleHTTP 4.x client][guzzle]. For a version compatible with
+[Guzzle 3.x][guzzle-3], use the [`1.x` branch][branch-1] of this library.
+
+It can be installed in whichever way you prefer, but we recommend [Composer][package].
 ```json
 {
     "require": {
-        "graze/guzzle-jsonrpc": "*"
+        "graze/guzzle-jsonrpc": "~2.0"
     }
 }
 ```
@@ -15,38 +21,35 @@ It can be installed in whichever way you prefer, but we recommend [Composer][pac
 ## Documentation
 ```php
 <?php
-use Graze\Guzzle\JsonRpc\JsonRpcClient;
+use Graze\GuzzleHttp\JsonRpc\Client;
 
 // Create the client
-$client = new JsonRpcClient('http://localhost:8000');
+$client = Client::factory('http://localhost:8000');
 
-// Prepare and send a notification
-$request = $client->notification('method', array('key' => 'value'));
-$request->send();
+// Send a notification
+$client->send($client->notification('method', ['key'=>'value']))
 
-// Prepare and send a request that expects a response
-$request  = $client->request('method', 123, array('key' => 'value'));
-$response = $request->send();
+// Send a request that expects a response
+$client->send($client->request('method', ['key'=>'value'], 123));
 
-// Prepare and send a batch of requests
-$request = $client->batch(array(
-    $client->request('method', 123, array('key' => 'value')),
-    $client->request('method', 124, array('key' => 'value')),
-    $client->notification('method', array('key' => 'value'))
-));
-$response = $request->send();
+// Send a batch of requests
+$request->sendAll([
+    $client->request('method', ['key'=>'value'], 123),
+    $client->request('method', ['key'=>'value'], 456),
+    $client->notification('method', ['key'=>'value'])
+]);
 ```
 
-### Contributing ###
+## Contributing
 We accept contributions to the source via Pull Request,
 but passing unit tests must be included before it will be considered for merge.
 ```bash
 $ composer install
-$ vendor/bin/phpunit
+$ make test
 ```
 
-If you have [Vagrant][vagrant] installed, you can build our dev environment to assist development.
-The repository will be mounted in `/srv`.
+If you have [Vagrant][vagrant] installed, you can build our dev environment to
+assist development. The repository will be mounted in `/srv`.
 ```bash
 $ vagrant up
 $ vagrant ssh
@@ -55,15 +58,22 @@ Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-23-generic x86_64)
 $ cd /srv
 ```
 
-### License ###
-The content of this library is released under the **MIT License** by **Nature Delivered Ltd**.<br/>
-You can find a copy of this license at http://www.opensource.org/licenses/mit or in [`LICENSE`][license]
+### License
+The content of this library is released under the **MIT License** by
+**Nature Delivered Ltd**.<br/> You can find a copy of this license at
+http://www.opensource.org/licenses/mit or in [`LICENSE`][license]
 
 <!-- Links -->
 [travis]: https://travis-ci.org/graze/guzzle-jsonrpc
-[travis-master]: https://travis-ci.org/graze/guzzle-jsonrpc.png?branch=master
-[packagist]: https://packagist.org/packages/graze/guzzle-jsonrpc
+[lang]: http://php.net
+[package]: https://packagist.org/packages/graze/guzzle-jsonrpc
+[ico-license]: http://img.shields.io/packagist/l/graze/guzzle-jsonrpc.svg?style=flat
+[ico-package]: http://img.shields.io/packagist/v/graze/guzzle-jsonrpc.svg?style=flat
+[ico-build]: http://img.shields.io/travis/graze/guzzle-jsonrpc/master.svg?style=flat
+[ico-engine]: http://img.shields.io/badge/php-~5.4-8892BF.svg?style=flat
 [vagrant]: http://vagrantup.com
 [jsonrpc]: http://jsonrpc.org/specification
-[guzzle]: https://github.com/guzzle/guzzle3
-[license]: /LICENSE
+[guzzle]: https://github.com/guzzle/guzzle
+[guzzle-3]: https://github.com/guzzle/guzzle3
+[branch-1]: https://github.com/graze/guzzle-jsonrpc/tree/1.x
+[license]: LICENSE
