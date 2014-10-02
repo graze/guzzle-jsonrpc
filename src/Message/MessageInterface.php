@@ -12,21 +12,17 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc\Message;
 
-use GuzzleHttp\Message\RequestInterface as HttpRequestInterface;
+use GuzzleHttp\Message\MessageInterface as HttpMessageInterface;
 
-interface RequestInterface extends MessageInterface, HttpRequestInterface
+interface MessageInterface extends HttpMessageInterface
 {
-    const BATCH        = 'BATCH';
-    const REQUEST      = 'REQUEST';
-    const NOTIFICATION = 'NOTIFICATION';
+    /**
+     * @return mixed
+     */
+    public function getRpcId();
 
     /**
      * @return string
      */
-    public function getRpcMethod();
-
-    /**
-     * @return array
-     */
-    public function getRpcParams();
+    public function getRpcVersion();
 }
