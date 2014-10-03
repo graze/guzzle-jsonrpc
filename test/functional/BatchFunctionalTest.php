@@ -26,7 +26,7 @@ class BatchFunctionalTest extends FunctionalTestCase
         $id = 'abc';
         $method = 'sum';
         $params = ['foo'=>123, 'bar'=>456];
-        $request = $this->client->request($method, $params, $id);
+        $request = $this->client->request($id, $method, $params);
         $responses = $this->client->sendAll([$request]);
 
         $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
@@ -55,10 +55,10 @@ class BatchFunctionalTest extends FunctionalTestCase
         $paramsB = ['foo'=>false];
         $paramsC = ['foo'=>123, 'bar'=>456];
         $paramsD = ['foo'=>123, 'bar'=>456];
-        $requestA = $this->client->request($methodA, $paramsA, $idA);
+        $requestA = $this->client->request($idA, $methodA, $paramsA);
         $requestB = $this->client->notification($methodB, $paramsB);
-        $requestC = $this->client->request($methodC, $paramsC, $idC);
-        $requestD = $this->client->request($methodD, $paramsD, $idD);
+        $requestC = $this->client->request($idC, $methodC, $paramsC);
+        $requestD = $this->client->request($idD, $methodD, $paramsD);
         $responses = $this->client->sendAll([$requestA, $requestB, $requestC, $requestD]);
 
         $this->assertEquals(ClientInterface::SPEC, $requestA->getRpcVersion());

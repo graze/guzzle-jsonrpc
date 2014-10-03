@@ -73,7 +73,7 @@ class Client implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function request($method, array $params = null, $id = null)
+    public function request($id, $method, array $params = null)
     {
         return $this->createRequest(RequestInterface::REQUEST, array_filter([
             'jsonrpc' => self::SPEC,

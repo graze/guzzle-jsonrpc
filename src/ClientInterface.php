@@ -45,12 +45,12 @@ interface ClientInterface
      * value for `id`.
      *
      * @link   http://www.jsonrpc.org/specification#request_object
+     * @param  mixed            $id
      * @param  string           $method
      * @param  array            $params
-     * @param  mixed            $id
      * @return RequestInterface
      */
-    public function request($method, array $params = null, $id = null);
+    public function request($id, $method, array $params = null);
 
     /**
      * Send a request

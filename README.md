@@ -30,12 +30,12 @@ $client = Client::factory('http://localhost:8000');
 $client->send($client->notification('method', ['key'=>'value']))
 
 // Send a request that expects a response
-$client->send($client->request('method', ['key'=>'value'], 123));
+$client->send($client->request(123, 'method', ['key'=>'value']));
 
 // Send a batch of requests
 $request->sendAll([
-    $client->request('method', ['key'=>'value'], 123),
-    $client->request('method', ['key'=>'value'], 456),
+    $client->request(123, 'method', ['key'=>'value']),
+    $client->request(456, 'method', ['key'=>'value']),
     $client->notification('method', ['key'=>'value'])
 ]);
 ```

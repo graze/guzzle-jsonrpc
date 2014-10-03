@@ -26,7 +26,7 @@ class RequestFunctionalTest extends FunctionalTestCase
         $id = 123;
         $method = 'concat';
         $params = ['foo'=>'abc', 'bar'=>'def'];
-        $request = $this->client->request($method, $params, $id);
+        $request = $this->client->request($id, $method, $params);
         $response = $this->client->send($request);
 
         $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
@@ -46,7 +46,7 @@ class RequestFunctionalTest extends FunctionalTestCase
         $id = 'abc';
         $method = 'sum';
         $params = ['foo'=>123, 'bar'=>456];
-        $request = $this->client->request($method, $params, $id);
+        $request = $this->client->request($id, $method, $params);
         $response = $this->client->send($request);
 
         $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
@@ -65,7 +65,7 @@ class RequestFunctionalTest extends FunctionalTestCase
     {
         $id = 'abc';
         $method = 'foo';
-        $request = $this->client->request($method, [], $id);
+        $request = $this->client->request($id, $method, []);
         $response = $this->client->send($request);
 
         $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
@@ -80,32 +80,11 @@ class RequestFunctionalTest extends FunctionalTestCase
         $this->assertEquals(null, $response->getRpcErrorMessage());
     }
 
-    public function testFooRequestWithNoId()
-    {
-        $method = 'foo';
-        $request = $this->client->request($method);
-        $response = $this->client->send($request);
-
-        // Grab the generated ID
-        $id = $request->getRpcId();
-
-        $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
-        $this->assertTrue(is_string($request->getRpcId()));
-        $this->assertEquals($method, $request->getRpcMethod());
-        $this->assertEquals(null, $request->getRpcParams());
-
-        $this->assertEquals(ClientInterface::SPEC, $response->getRpcVersion());
-        $this->assertEquals('foo', $response->getRpcResult());
-        $this->assertEquals($id, $response->getRpcId());
-        $this->assertEquals(null, $response->getRpcErrorCode());
-        $this->assertEquals(null, $response->getRpcErrorMessage());
-    }
-
     public function testBarRequest()
     {
         $id = 'abc';
         $method = 'bar';
-        $request = $this->client->request($method, [], $id);
+        $request = $this->client->request($id, $method, []);
         $response = $this->client->send($request);
 
         $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
