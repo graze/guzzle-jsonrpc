@@ -1,12 +1,19 @@
 language: php
 
-php: [5.4, 5.5, 5.6, hhvm]
+php: [5.4, 5.5, 5.6, hhvm, hhvm-nightly]
 
 before_script:
+ - ~/.nvm/nvm.sh install v0.10.32
+ - ~/.nvm.nvm.sh run v0.10.32
  - make
 
 script:
  - make test
+
+matrix:
+  allow_failures:
+    - php: hhvm-nightly
+  fast_finish: true
 
 notifications:
   email: false
