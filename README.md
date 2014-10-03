@@ -7,7 +7,7 @@
 
 This library implements [JSON-RPC 2.0][jsonrpc] for the
 [GuzzleHTTP 4.x client][guzzle]. For a version compatible with
-[Guzzle 3.x][guzzle-3], use the [`1.x` branch][branch-1] of this library.
+[Guzzle 3.x][guzzle-3], use the [`guzzle-3` branch][branch-3] of this library.
 
 It can be installed in whichever way you prefer, but we recommend [Composer][package].
 ```json
@@ -75,5 +75,5 @@ http://www.opensource.org/licenses/mit or in [`LICENSE`][license]
 [jsonrpc]: http://jsonrpc.org/specification
 [guzzle]: https://github.com/guzzle/guzzle
 [guzzle-3]: https://github.com/guzzle/guzzle3
-[branch-1]: https://github.com/graze/guzzle-jsonrpc/tree/1.x
+[branch-3]: https://github.com/graze/guzzle-jsonrpc/tree/guzzle-3
 [license]: LICENSE
