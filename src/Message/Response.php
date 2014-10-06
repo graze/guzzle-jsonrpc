@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Guzzle JSON-RPC
+ * This file is part of Guzzle HTTP JSON-RPC
  *
  * Copyright (c) 2014 Nature Delivered Ltd. <http://graze.com>
  *
@@ -10,57 +10,65 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
-namespace Graze\Guzzle\JsonRpc\Message;
+namespace Graze\GuzzleHttp\JsonRpc\Message;
 
-use Guzzle\Common\Collection;
-use Guzzle\Http\Message\Response as BaseResponse;
-use OutOfRangeException;
+use GuzzleHttp;
+use GuzzleHttp\Message\Response as HttpResponse;
 
-class Response extends BaseResponse implements ResponseInterface
+class Response extends HttpResponse implements ResponseInterface
 {
     /**
-     * @var Collection
+     * {@inheritdoc}
      */
-    protected $rpcFields;
-
-    /**
-     * @param BaseResponse $response
-     * @param array $data
-     */
-    public function __construct(BaseResponse $response, array $data)
+    public function getRpcErrorCode()
     {
-        parent::__construct($response->getStatusCode(), $response->getHeaders());
+        $error = $this->getFieldFromBody('error');
 
-        $this->rpcFields = new Collection($data);
-
-        foreach (array('jsonrpc', 'id', 'result') as $key) {
-            if (!$this->rpcFields->hasKey($key)) {
-                throw new OutOfRangeException('Parameter "' . $key . '" expected but not provided.');
-            }
-        }
+        return isset($error['code']) ? $error['code'] : null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getId()
+    public function getRpcErrorMessage()
     {
-        return $this->rpcFields->get('id');
+        $error = $this->getFieldFromBody('error');
+
+        return isset($error['message']) ? $error['message'] : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRpcId()
+    {
+        return $this->getFieldFromBody('id');
     }
 
     /**
      * @return mixed
      */
-    public function getResult()
+    public function getRpcResult()
     {
-        return $this->rpcFields->get('result');
+        return $this->getFieldFromBody('result');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getVersion()
+    public function getRpcVersion()
     {
-        return $this->rpcFields->get('jsonrpc');
+        return $this->getFieldFromBody('jsonrpc');
+    }
+
+    /**
+     * @param  string $key
+     * @return mixed
+     */
+    protected function getFieldFromBody($key)
+    {
+        $rpc = GuzzleHttp\json_decode((string) $this->getBody(), true);
+
+        return isset($rpc[$key]) ? $rpc[$key] : null;
     }
 }

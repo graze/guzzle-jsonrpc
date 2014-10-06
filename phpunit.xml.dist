@@ -5,6 +5,9 @@
 
     <!-- Test suites -->
     <testsuites>
+        <testsuite name="functional">
+            <directory suffix="FunctionalTest.php">./test/functional</directory>
+        </testsuite>
         <testsuite name="unit">
             <directory suffix="Test.php">./test/unit</directory>
         </testsuite>

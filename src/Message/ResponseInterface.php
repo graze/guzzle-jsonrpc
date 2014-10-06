@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Guzzle JSON-RPC
+ * This file is part of Guzzle HTTP JSON-RPC
  *
  * Copyright (c) 2014 Nature Delivered Ltd. <http://graze.com>
  *
@@ -10,17 +10,24 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
-namespace Graze\Guzzle\JsonRpc\Message;
+namespace Graze\GuzzleHttp\JsonRpc\Message;
 
-interface ResponseInterface
+use GuzzleHttp\Message\ResponseInterface as HttpResponseInterface;
+
+interface ResponseInterface extends MessageInterface, HttpResponseInterface
 {
     /**
      * @return integer
      */
-    public function getId();
+    public function getRpcErrorCode();
 
     /**
      * @return string
      */
-    public function getVersion();
+    public function getRpcErrorMessage();
+
+    /**
+     * @return mixed
+     */
+    public function getRpcResult();
 }
