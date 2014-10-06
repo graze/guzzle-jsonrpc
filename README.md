@@ -40,6 +40,32 @@ $request->sendAll([
 ]);
 ```
 
+### Throw exception on RPC error
+You can throw an exception if you receive an RPC error response by attaching a
+subscriber to either the client or the request. You probably won't want to do so
+with batch requests as the exception will only include the first bad response in
+your batch.
+```php
+<?php
+use Graze\GuzzleHttp\JsonRpc\Client;
+use Graze\GuzzleHttp\JsonRpc\Exception\RequestException;
+use Graze\GuzzleHttp\JsonRpc\Subscriber\ErrorSubscriber;
+
+// Create the client
+$client = Client::factory('http://localhost:8000');
+
+// Create a request and attach the error subscriber
+$request = $client->request(123, 'method', ['key'=>'value']);
+$request->getEmitter()->addSubscriber(new ErrorSubscriber());
+
+// Send the request
+try {
+    $client->send($request);
+} catch (RequestException $e) {
+    die($e->getResponse()->getRpcErrorMessage());
+}
+```
+
 ## Contributing
 We accept contributions to the source via Pull Request,
 but passing unit tests must be included before it will be considered for merge.
