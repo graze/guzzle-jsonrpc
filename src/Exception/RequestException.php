@@ -15,6 +15,8 @@ namespace Graze\GuzzleHttp\JsonRpc\Exception;
 use Exception;
 use Graze\GuzzleHttp\JsonRpc\Message\RequestInterface;
 use Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface;
+use GuzzleHttp\Message\RequestInterface as HttpRequestInterface;
+use GuzzleHttp\Message\ResponseInterface as HttpResponseInterface;
 use GuzzleHttp\Exception\RequestException as HttpRequestException;
 
 class RequestException extends HttpRequestException
@@ -23,26 +25,30 @@ class RequestException extends HttpRequestException
      * {@inheritdoc}
      */
     public static function create(
-        RequestInterface $request,
-        ResponseInterface $response,
+        HttpRequestInterface $request,
+        HttpResponseInterface $response = null,
         Exception $previous = null
     ) {
-        static $clientErrorCodes = [-32600, -32601, -32602, -32700];
+        if ($request instanceof RequestInterface && $response instanceof ResponseInterface) {
+            static $clientErrorCodes = [-32600, -32601, -32602, -32700];
 
-        $errorCode = $response->getRpcErrorCode();
-        if (in_array($errorCode, $clientErrorCodes)) {
-            $label = 'Client RPC error response';
-            $className = __NAMESPACE__ . '\\ClientException';
-        } else {
-            $label = 'Server RPC error response';
-            $className = __NAMESPACE__ . '\\ServerException';
+            $errorCode = $response->getRpcErrorCode();
+            if (in_array($errorCode, $clientErrorCodes)) {
+                $label = 'Client RPC error response';
+                $className = __NAMESPACE__ . '\\ClientException';
+            } else {
+                $label = 'Server RPC error response';
+                $className = __NAMESPACE__ . '\\ServerException';
+            }
+
+            $message = $label . ' [url] ' . $request->getUrl()
+                . ' [method] ' . $request->getRpcMethod()
+                . ' [error code] ' . $errorCode
+                . ' [error message] ' . $response->getRpcErrorMessage();
+
+            return new $className($message, $request, $response, $previous);
         }
 
-        $message = $label . ' [url] ' . $request->getUrl()
-            . ' [method] ' . $request->getRpcMethod()
-            . ' [error code] ' . $errorCode
-            . ' [error message] ' . $response->getRpcErrorMessage();
-
-        return new $className($message, $request, $response, $previous);
+        return parent::create($request, $response, $previous);
     }
 }
