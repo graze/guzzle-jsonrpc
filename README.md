@@ -56,7 +56,7 @@ $client = Client::factory('http://localhost:8000');
 
 // Create a request and attach the error subscriber
 $request = $client->request(123, 'method', ['key'=>'value']);
-$request->getEmitter()->addSubscriber(new ErrorSubscriber());
+$request->getEmitter()->attach(new ErrorSubscriber());
 
 // Send the request
 try {
