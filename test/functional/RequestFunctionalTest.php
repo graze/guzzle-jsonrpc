@@ -12,6 +12,7 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc;
 
+use Graze\GuzzleHttp\JsonRpc\Subscriber\ErrorSubscriber;
 use Graze\GuzzleHttp\JsonRpc\Test\FunctionalTestCase;
 
 class RequestFunctionalTest extends FunctionalTestCase
@@ -97,5 +98,21 @@ class RequestFunctionalTest extends FunctionalTestCase
         $this->assertEquals($id, $response->getRpcId());
         $this->assertTrue(is_int($response->getRpcErrorCode()));
         $this->assertTrue(is_string($response->getRpcErrorMessage()));
+    }
+
+    public function testBarRequestThrows()
+    {
+        $id = 'abc';
+        $method = 'bar';
+        $request = $this->client->request($id, $method, []);
+        $request->getEmitter()->attach(new ErrorSubscriber());
+
+        $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
+        $this->assertEquals($id, $request->getRpcId());
+        $this->assertEquals($method, $request->getRpcMethod());
+        $this->assertEquals(null, $request->getRpcParams());
+
+        $this->setExpectedException('Graze\GuzzleHttp\JsonRpc\Exception\ClientException');
+        $response = $this->client->send($request);
     }
 }
