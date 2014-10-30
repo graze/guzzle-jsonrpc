@@ -12,10 +12,8 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc;
 
-if (!defined('GRAZE_GUZZLEHTTP_JSONRPC_FUNCTIONS')) {
-
-    define('GRAZE_GUZZLEHTTP_JSONRPC_FUNCTIONS', ClientInterface::SPEC);
-
+class Utils
+{
     /**
      * Wrapper for json_encode that includes character escaping by default
      *
@@ -23,7 +21,7 @@ if (!defined('GRAZE_GUZZLEHTTP_JSONRPC_FUNCTIONS')) {
      * @param  boolean        $escapeChars
      * @return string|boolean
      */
-    function json_encode($data, $escapeChars = true)
+    public static function jsonEncode($data, $escapeChars = true)
     {
         $options =
             \JSON_HEX_AMP  |

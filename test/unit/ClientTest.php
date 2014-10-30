@@ -113,16 +113,29 @@ class ClientTest extends UnitTestCase
 
     public function testSendAll()
     {
+        $batchRequest = $this->mockRequest();
         $requestA = $this->mockRequest();
         $requestB = $this->mockRequest();
+        $batchResponse = $this->mockResponse();
+        $responseA = $this->mockResponse();
+        $responseB = $this->mockResponse();
 
-        $this->httpClient->shouldReceive('sendAll')->once()->with([$requestA, $requestB], Mockery::on(function ($listeners) {
-            $before = isset($listeners['before']) && is_callable($listeners['before']);
-            $complete = isset($listeners['complete']) && is_callable($listeners['complete']);
+        $factory = $this->mockMessageFactory();
+        $this->httpClient->messageFactory = $factory;
 
-            return $before && $complete;
-        }));
+        $requestA->shouldReceive('getBody')->once()->withNoArgs()->andReturn('["foo"]');
+        $requestB->shouldReceive('getBody')->once()->withNoArgs()->andReturn('["bar"]');
 
-        $this->client->sendAll([$requestA, $requestB]);
+        $this->httpClient->shouldReceive('createRequest')->once()->with(RequestInterface::BATCH, null, ['jsonrpc'=>[['foo'], ['bar']]])->andReturn($batchRequest);
+        $this->httpClient->shouldReceive('send')->once()->with($batchRequest)->andReturn($batchResponse);
+
+        $batchResponse->shouldReceive('getBody')->once()->withNoArgs()->andReturn('[["foo"], ["bar"]]');
+        $batchResponse->shouldReceive('getStatusCode')->times(2)->withNoArgs()->andReturn(200);
+        $batchResponse->shouldReceive('getHeaders')->times(2)->withNoArgs()->andReturn(['headers']);
+
+        $factory->shouldReceive('createResponse')->once()->with(200, ['headers'], '["foo"]')->andReturn($responseA);
+        $factory->shouldReceive('createResponse')->once()->with(200, ['headers'], '["bar"]')->andReturn($responseB);
+
+        $this->assertSame([$responseA, $responseB], $this->client->sendAll([$requestA, $requestB]));
     }
 }

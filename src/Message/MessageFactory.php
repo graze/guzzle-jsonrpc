@@ -12,7 +12,7 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc\Message;
 
-use Graze\GuzzleHttp\JsonRpc as JsonRpc;
+use Graze\GuzzleHttp\JsonRpc\Utils;
 use GuzzleHttp\Message\MessageFactory as HttpMessageFactory;
 use GuzzleHttp\Stream\Stream;
 
@@ -31,7 +31,7 @@ class MessageFactory extends HttpMessageFactory
 
         $request = new Request('POST', $url, [], null, $config);
         $request->setHeader('Content-Type', 'application/json');
-        $request->setBody(Stream::factory(JsonRpc\json_encode($jsonrpc)));
+        $request->setBody(Stream::factory(Utils::jsonEncode($jsonrpc)));
 
         $this->applyOptions($request, $options);
 

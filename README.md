@@ -5,15 +5,17 @@
 [![PHP ~5.4][ico-engine]][lang]
 [![MIT Licensed][ico-license]][license]
 
-This library implements [JSON-RPC 2.0][jsonrpc] for the
-[GuzzleHTTP 4.x client][guzzle]. For a version compatible with
-[Guzzle 3.x][guzzle-3], use the [`guzzle-3` branch][branch-3] of this library.
+This library implements [JSON-RPC 2.0][jsonrpc] for the Guzzle HTTP client. We
+try to support all commonly used versions of Guzzle including:
+ - [GuzzleHTTP 5][guzzle] on [`master`][branch-master] branch, `>= 2.1` releases
+ - [GuzzleHTTP 4][guzzle] on [`guzzle-4`][branch-4] branch, `2.0.x` releases
+ - [Guzzle 3][guzzle-3] on [`guzzle-3`][branch-3] branch, `1.x` releases
 
 It can be installed in whichever way you prefer, but we recommend [Composer][package].
 ```json
 {
     "require": {
-        "graze/guzzle-jsonrpc": "~2.0"
+        "graze/guzzle-jsonrpc": "~2.1"
     }
 }
 ```
@@ -79,8 +81,6 @@ assist development. The repository will be mounted in `/srv`.
 ```bash
 $ vagrant up
 $ vagrant ssh
-
-Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-23-generic x86_64)
 $ cd /srv
 ```
 
@@ -102,4 +102,6 @@ http://www.opensource.org/licenses/mit or in [`LICENSE`][license]
 [guzzle]: https://github.com/guzzle/guzzle
 [guzzle-3]: https://github.com/guzzle/guzzle3
 [branch-3]: https://github.com/graze/guzzle-jsonrpc/tree/guzzle-3
+[branch-4]: https://github.com/graze/guzzle-jsonrpc/tree/guzzle-4
+[branch-master]: https://github.com/graze/guzzle-jsonrpc
 [license]: LICENSE

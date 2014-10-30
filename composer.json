@@ -1,7 +1,7 @@
 {
     "name": "graze/guzzle-jsonrpc",
     "description": "JSON-RPC 2.0 client for Guzzle",
-    "keywords": ["guzzle", "guzzlehttp", "http", "json", "json-rpc", "jsonrpc", "rpc"],
+    "keywords": ["guzzle", "guzzlehttp", "http", "json", "json-rpc", "jsonrpc", "ring", "rpc"],
     "homepage": "https://github.com/graze/guzzle-jsonrpc",
     "license": "MIT",
     "type": "library",
@@ -14,10 +14,7 @@
     "autoload": {
         "psr-4": {
             "Graze\\GuzzleHttp\\JsonRpc\\": "src"
-        },
-        "files": [
-            "src/functions.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
@@ -26,12 +23,12 @@
     },
     "require": {
         "php": ">=5.4",
-        "guzzlehttp/guzzle": "~4.2"
+        "guzzlehttp/guzzle": "~5.0"
     },
     "require-dev": {
         "adlawson/timezone": "~1.0",
         "fabpot/php-cs-fixer": "~0.5",
         "mockery/mockery": "~0.9",
-        "phpunit/phpunit": "~4.0"
+        "phpunit/phpunit": "~4.3"
     }
 }
