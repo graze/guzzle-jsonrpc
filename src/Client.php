@@ -16,7 +16,6 @@ use Closure;
 use Graze\GuzzleHttp\JsonRpc\Message\MessageFactory;
 use Graze\GuzzleHttp\JsonRpc\Message\RequestInterface;
 use Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface;
-use Graze\GuzzleHttp\JsonRpc\Subscriber\RequestSubscriber;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\ClientInterface as HttpClientInterface;
 use GuzzleHttp\Message\MessageFactoryInterface;
