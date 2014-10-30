@@ -81,8 +81,6 @@ assist development. The repository will be mounted in `/srv`.
 ```bash
 $ vagrant up
 $ vagrant ssh
-
-Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-23-generic x86_64)
 $ cd /srv
 ```
 
