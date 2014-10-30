@@ -12,14 +12,15 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc;
 
-use Graze\GuzzleHttp\JsonRpc\Adapter\BatchAdapter;
+use Closure;
 use Graze\GuzzleHttp\JsonRpc\Message\MessageFactory;
 use Graze\GuzzleHttp\JsonRpc\Message\RequestInterface;
+use Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface;
 use Graze\GuzzleHttp\JsonRpc\Subscriber\RequestSubscriber;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\ClientInterface as HttpClientInterface;
-use GuzzleHttp\Adapter\ParallelAdapterInterface;
 use GuzzleHttp\Message\MessageFactoryInterface;
+use GuzzleHttp\Utils as GuzzleUtils;
 
 class Client implements ClientInterface
 {
@@ -43,13 +44,9 @@ class Client implements ClientInterface
      */
     public static function factory($url, array $config = [])
     {
-        $messageFactory = self::createMessageFactory();
-        $parallelAdapter = self::createParallelAdapter($messageFactory);
-
         return new self(new HttpClient(array_replace_recursive([
             'base_url' => $url,
-            'message_factory' => $messageFactory,
-            'parallel_adapter' => $parallelAdapter,
+            'message_factory' => self::createMessageFactory(),
             'defaults' => [
                 'headers' => [
                     'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3'
@@ -98,14 +95,12 @@ class Client implements ClientInterface
      */
     public function sendAll(array $requests)
     {
-        $responses = new RequestSubscriber();
-        $listeners = array_map(function ($method) use ($responses) {
-            return [$responses, reset($method)];
-        }, $responses->getEvents());
+        $response = $this->httpClient->send($this->createRequest(
+            RequestInterface::BATCH,
+            $this->getBatchRequestOptions($requests)
+        ));
 
-        $this->httpClient->sendAll($requests, $listeners);
-
-        return $responses->getAll();
+        return $this->getBatchResponses($response);
     }
 
     /**
@@ -114,15 +109,6 @@ class Client implements ClientInterface
     protected static function createMessageFactory()
     {
         return new MessageFactory();
-    }
-
-    /**
-     * @param  MessageFactoryInterface  $factory
-     * @return ParallelAdapterInterface
-     */
-    protected static function createParallelAdapter(MessageFactoryInterface $factory)
-    {
-        return new BatchAdapter($factory);
     }
 
     /**
@@ -135,5 +121,47 @@ class Client implements ClientInterface
         return $this->httpClient->createRequest($method, null, [
             'jsonrpc' => $options
         ]);
+    }
+
+    /**
+     * @return MessageFactoryInterface
+     */
+    protected function getMessageFactory()
+    {
+        // This is pretty lame, but we need the factory from the client
+        $factoryExtractor = Closure::bind(function () {
+            return $this->messageFactory;
+        }, $this->httpClient, $this->httpClient);
+
+        return $factoryExtractor();
+    }
+
+    /**
+     * @param  RequestInterface[] $requests
+     * @return array
+     */
+    protected function getBatchRequestOptions(array $requests)
+    {
+        return array_map(function (RequestInterface $request) {
+            return GuzzleUtils::jsonDecode((string) $request->getBody());
+        }, $requests);
+    }
+
+    /**
+     * @param  ResponseInterface  $response
+     * @return RequestInterface[]
+     */
+    protected function getBatchResponses(ResponseInterface $response)
+    {
+        $factory = $this->getMessageFactory();
+        $results = GuzzleUtils::jsonDecode((string) $response->getBody(), true);
+
+        return array_map(function (array $result) use ($factory, $response) {
+            return $factory->createResponse(
+                $response->getStatusCode(),
+                $response->getHeaders(),
+                Utils::jsonEncode($result)
+            );
+        }, $results);
     }
 }
