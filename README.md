@@ -29,7 +29,7 @@ use Graze\GuzzleHttp\JsonRpc\Client;
 $client = Client::factory('http://localhost:8000');
 
 // Send a notification
-$client->send($client->notification('method', ['key'=>'value']))
+$client->send($client->notification('method', ['key'=>'value']));
 
 // Send a request that expects a response
 $client->send($client->request(123, 'method', ['key'=>'value']));
