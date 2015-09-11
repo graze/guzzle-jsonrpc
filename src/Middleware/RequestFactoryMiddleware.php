@@ -12,17 +12,29 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc\Middleware;
 
+use Graze\GuzzleHttp\JsonRpc\Message\MessageFactoryInterface;
 use Psr\Http\Message\RequestInterface as HttpRequestInterface;
 
-class RequestHeaderMiddleware extends AbstractMiddleware
+class RequestFactoryMiddleware extends AbstractMiddleware
 {
+    /**
+     * @var MessageFactoryInterface
+     */
+    protected $factory;
+
+    /**
+     * @param MessageFactoryInterface $factory
+     */
+    public function __construct(MessageFactoryInterface $factory)
+    {
+        $this->factory = $factory;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function applyRequest(HttpRequestInterface $request, array $options)
     {
-        return $request
-            ->withHeader('Accept-Encoding', 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3')
-            ->withHeader('Content-Type', 'application/json');
+        return $this->factory->fromRequest($request);
     }
 }

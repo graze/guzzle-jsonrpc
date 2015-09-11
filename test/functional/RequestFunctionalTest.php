@@ -102,12 +102,10 @@ class RequestFunctionalTest extends FunctionalTestCase
 
     public function testBarRequestThrows()
     {
-        $this->markTestSkipped('Event emitter no longer exists on the request');
-
         $id = 'abc';
         $method = 'bar';
-        $request = $this->client->request($id, $method, []);
-        $request->getEmitter()->attach(new ErrorSubscriber());
+        $client = $this->createClient(null, ['rpc_error' => true]);
+        $request = $client->request($id, $method, []);
 
         $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
         $this->assertEquals($id, $request->getRpcId());
@@ -115,6 +113,6 @@ class RequestFunctionalTest extends FunctionalTestCase
         $this->assertEquals(null, $request->getRpcParams());
 
         $this->setExpectedException('Graze\GuzzleHttp\JsonRpc\Exception\ClientException');
-        $response = $this->client->send($request);
+        $response = $client->send($request);
     }
 }

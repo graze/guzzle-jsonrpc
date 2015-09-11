@@ -18,11 +18,12 @@ use Graze\GuzzleHttp\JsonRpc\Message\MessageFactory;
 use Graze\GuzzleHttp\JsonRpc\Message\MessageFactoryInterface;
 use Graze\GuzzleHttp\JsonRpc\Message\RequestInterface;
 use Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface;
+use Graze\GuzzleHttp\JsonRpc\Middleware\RequestFactoryMiddleware;
 use Graze\GuzzleHttp\JsonRpc\Middleware\RequestHeaderMiddleware;
 use Graze\GuzzleHttp\JsonRpc\Middleware\ResponseFactoryMiddleware;
+use Graze\GuzzleHttp\JsonRpc\Middleware\RpcErrorMiddleware;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\ClientInterface as HttpClientInterface;
-use GuzzleHttp\Middleware as HttpMiddleware;
 
 class Client implements ClientInterface
 {
@@ -46,8 +47,10 @@ class Client implements ClientInterface
         $this->messageFactory = $factory;
 
         $handler = $this->httpClient->getConfig('handler');
-        $handler->push(HttpMiddleware::mapRequest(new RequestHeaderMiddleware()));
-        $handler->push(HttpMiddleware::mapResponse(new ResponseFactoryMiddleware($factory)));
+        $handler->push(new RequestFactoryMiddleware($factory));
+        $handler->push(new RequestHeaderMiddleware());
+        $handler->push(new RpcErrorMiddleware());
+        $handler->push(new ResponseFactoryMiddleware($factory));
     }
 
     /**

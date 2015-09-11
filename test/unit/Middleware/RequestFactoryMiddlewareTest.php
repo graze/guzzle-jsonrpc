@@ -14,7 +14,7 @@ namespace Graze\GuzzleHttp\JsonRpc\Middleware;
 
 use Graze\GuzzleHttp\JsonRpc\Test\UnitTestCase;
 
-class ResponseFactoryMiddlewareTest extends UnitTestCase
+class RequestFactoryMiddlewareTest extends UnitTestCase
 {
     public function setUp()
     {
@@ -22,19 +22,19 @@ class ResponseFactoryMiddlewareTest extends UnitTestCase
         $this->response = $this->mockResponse();
         $this->factory = $this->mockMessageFactory();
 
-        $this->middleware = new ResponseFactoryMiddleware($this->factory);
+        $this->middleware = new RequestFactoryMiddleware($this->factory);
     }
 
     public function testApplyRequest()
     {
-        $this->assertSame($this->request, $this->middleware->applyRequest($this->request, []));
+        $newRequest = clone $this->request;
+        $this->factory->shouldReceive('fromRequest')->once()->with($this->request)->andReturn($newRequest);
+
+        $this->assertSame($newRequest, $this->middleware->applyRequest($this->request, []));
     }
 
     public function testApplyResponse()
     {
-        $newResponse = clone $this->response;
-        $this->factory->shouldReceive('fromResponse')->once()->with($this->response)->andReturn($newResponse);
-
-        $this->assertSame($newResponse, $this->middleware->applyResponse($this->request, $this->response, []));
+        $this->assertSame($this->response, $this->middleware->applyResponse($this->request, $this->response, []));
     }
 }

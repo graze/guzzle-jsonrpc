@@ -12,30 +12,26 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc\Middleware;
 
-use Graze\GuzzleHttp\JsonRpc\Message\MessageFactoryInterface;
+use Graze\GuzzleHttp\JsonRpc\Exception\RequestException;
+use Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface;
 use Psr\Http\Message\RequestInterface as HttpRequestInterface;
 use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
-class ResponseFactoryMiddleware extends AbstractMiddleware
+class RpcErrorMiddleware extends AbstractMiddleware
 {
-    /**
-     * @var MessageFactoryInterface
-     */
-    protected $factory;
-
-    /**
-     * @param MessageFactoryInterface $factory
-     */
-    public function __construct(MessageFactoryInterface $factory)
-    {
-        $this->factory = $factory;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function applyResponse(HttpRequestInterface $request, HttpResponseInterface $response, array $options)
     {
-        return $this->factory->fromResponse($response);
+        if ($response instanceof ResponseInterface &&
+            isset($options['rpc_error']) &&
+            true === $options['rpc_error'] &&
+            null !== $response->getRpcErrorCode()
+        ) {
+            throw RequestException::create($request, $response);
+        }
+
+        return $response;
     }
 }

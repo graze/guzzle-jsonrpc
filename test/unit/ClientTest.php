@@ -25,7 +25,7 @@ class ClientTest extends UnitTestCase
         $this->messageFactory = $this->mockMessageFactory();
 
         $this->httpClient->shouldReceive('getConfig')->once()->with('handler')->andReturn($this->httpHandler);
-        $this->httpHandler->shouldReceive('push')->times(2);
+        $this->httpHandler->shouldReceive('push')->times(4);
 
         $this->client = new Client($this->httpClient, $this->messageFactory);
     }

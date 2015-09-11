@@ -41,7 +41,7 @@ class RequestException extends HttpRequestException
                 $className = __NAMESPACE__ . '\\ServerException';
             }
 
-            $message = $label . ' [url] ' . $request->getUrl()
+            $message = $label . ' [uri] ' . $request->getRequestTarget()
                 . ' [method] ' . $request->getRpcMethod()
                 . ' [error code] ' . $errorCode
                 . ' [error message] ' . $response->getRpcErrorMessage();

@@ -19,17 +19,24 @@ class RequestHeaderMiddlewareTest extends UnitTestCase
     public function setUp()
     {
         $this->request = $this->mockRequest();
+        $this->response = $this->mockResponse();
+
+        $this->middleware = new RequestHeaderMiddleware();
     }
 
-    public function testInvoke()
+    public function testApplyRequest()
     {
-        $middleware = new RequestHeaderMiddleware();
         $requestA = clone $this->request;
         $requestB = clone $requestA;
 
         $this->request->shouldReceive('withHeader')->once()->with('Accept-Encoding', 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3')->andReturn($requestA);
         $requestA->shouldReceive('withHeader')->once()->with('Content-Type', 'application/json')->andReturn($requestB);
 
-        $this->assertSame($requestB, $middleware($this->request));
+        $this->assertSame($requestB, $this->middleware->applyRequest($this->request, []));
+    }
+
+    public function testApplyResponse()
+    {
+        $this->assertSame($this->response, $this->middleware->applyResponse($this->request, $this->response, []));
     }
 }
