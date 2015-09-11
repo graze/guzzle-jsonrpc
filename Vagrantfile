@@ -1,14 +1,13 @@
 Vagrant.configure("2") do |config|
 
   # Box
-  config.vm.box = "trusty64"
-  config.vm.box_url = "https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/1/providers/virtualbox.box"
+  config.vm.box = "ubuntu/trusty64"
 
   # Shared folders
   config.vm.synced_folder ".", "/srv"
 
   # Setup
-  config.vm.provision :shell, :inline => "hostname guzzle-jsonrpc && locale-gen en_GB.UTF.8"
+  config.vm.provision :shell, :inline => "hostnamectl set-hostname guzzle-jsonrpc && locale-gen en_GB.UTF.8"
   config.vm.provision :shell, :inline => "apt-get update --fix-missing"
   config.vm.provision :shell, :inline => "apt-get install -q -y g++ make git curl"
   config.vm.provision :shell, :inline => "add-apt-repository ppa:chris-lea/node.js"
