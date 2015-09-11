@@ -27,7 +27,8 @@ class RequestException extends HttpRequestException
     public static function create(
         HttpRequestInterface $request,
         HttpResponseInterface $response = null,
-        Exception $previous = null
+        Exception $previous = null,
+        array $handlerContext = null
     ) {
         if ($request instanceof RequestInterface && $response instanceof ResponseInterface) {
             static $clientErrorCodes = [-32600, -32601, -32602, -32700];
