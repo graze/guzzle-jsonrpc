@@ -24,15 +24,13 @@ class ResponseTest extends UnitTestCase
 
     public function testInterface()
     {
-        $this->assertInstanceOf('GuzzleHttp\Message\ResponseInterface', new Response(200));
+        $this->assertInstanceOf('Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface', new Response(200));
+        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', new Response(200));
     }
 
     public function testGetRpcId()
     {
-        $response = new Response(200);
-        $response->setBody($this->stream);
-
-        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+        $response = new Response(200, [], json_encode([
             'id' => 123
         ]));
 
@@ -48,10 +46,7 @@ class ResponseTest extends UnitTestCase
 
     public function testGetRpcErrorCode()
     {
-        $response = new Response(200);
-        $response->setBody($this->stream);
-
-        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+        $response = new Response(200, [], json_encode([
             'error' => ['code'=>123]
         ]));
 
@@ -67,10 +62,7 @@ class ResponseTest extends UnitTestCase
 
     public function testGetRpcErrorMessage()
     {
-        $response = new Response(200);
-        $response->setBody($this->stream);
-
-        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+        $response = new Response(200, [], json_encode([
             'error' => ['message'=>'foo']
         ]));
 
@@ -86,10 +78,7 @@ class ResponseTest extends UnitTestCase
 
     public function testGetRpcResult()
     {
-        $response = new Response(200);
-        $response->setBody($this->stream);
-
-        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+        $response = new Response(200, [], json_encode([
             'result' => 'foo'
         ]));
 
@@ -105,10 +94,7 @@ class ResponseTest extends UnitTestCase
 
     public function testGetRpcVersion()
     {
-        $response = new Response(200);
-        $response->setBody($this->stream);
-
-        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+        $response = new Response(200, [], json_encode([
             'jsonrpc' => 'foo'
         ]));
 

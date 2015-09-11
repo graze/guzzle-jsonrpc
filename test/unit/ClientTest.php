@@ -21,7 +21,13 @@ class ClientTest extends UnitTestCase
     public function setup()
     {
         $this->httpClient = $this->mockHttpClient();
-        $this->client = new Client($this->httpClient);
+        $this->httpHandler = $this->mockHttpHandler();
+        $this->messageFactory = $this->mockMessageFactory();
+
+        $this->httpClient->shouldReceive('getConfig')->once()->with('handler')->andReturn($this->httpHandler);
+        $this->httpHandler->shouldReceive('push')->times(2);
+
+        $this->client = new Client($this->httpClient, $this->messageFactory);
     }
 
     public function testInterface()
@@ -39,8 +45,11 @@ class ClientTest extends UnitTestCase
         $request = $this->mockRequest();
         $jsonrpc = ['jsonrpc'=>ClientInterface::SPEC, 'method'=>'foo'];
         $type = RequestInterface::NOTIFICATION;
+        $uri = 'http://foo';
 
-        $this->httpClient->shouldReceive('createRequest')->once()->with($type, null, ['jsonrpc'=>$jsonrpc])->andReturn($request);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('base_uri')->andReturn($uri);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('defaults')->andReturn([]);
+        $this->messageFactory->shouldReceive('createRequest')->once()->with($type, $uri, [], $jsonrpc)->andReturn($request);
 
         $this->assertSame($request, $this->client->notification('foo'));
     }
@@ -50,8 +59,11 @@ class ClientTest extends UnitTestCase
         $request = $this->mockRequest();
         $jsonrpc = ['jsonrpc'=>ClientInterface::SPEC, 'method'=>'foo', 'params'=>['bar'=>true]];
         $type = RequestInterface::NOTIFICATION;
+        $uri = 'http://foo';
 
-        $this->httpClient->shouldReceive('createRequest')->once()->with($type, null, ['jsonrpc'=>$jsonrpc])->andReturn($request);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('base_uri')->andReturn($uri);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('defaults')->andReturn([]);
+        $this->messageFactory->shouldReceive('createRequest')->once()->with($type, $uri, [], $jsonrpc)->andReturn($request);
 
         $this->assertSame($request, $this->client->notification('foo', ['bar'=>true]));
     }
@@ -61,8 +73,11 @@ class ClientTest extends UnitTestCase
         $request = $this->mockRequest();
         $jsonrpc = ['jsonrpc'=>ClientInterface::SPEC, 'method'=>'foo', 'id'=>123];
         $type = RequestInterface::REQUEST;
+        $uri = 'http://foo';
 
-        $this->httpClient->shouldReceive('createRequest')->once()->with($type, null, ['jsonrpc'=>$jsonrpc])->andReturn($request);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('base_uri')->andReturn($uri);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('defaults')->andReturn([]);
+        $this->messageFactory->shouldReceive('createRequest')->once()->with($type, $uri, [], $jsonrpc)->andReturn($request);
 
         $this->assertSame($request, $this->client->request(123, 'foo'));
     }
@@ -72,8 +87,11 @@ class ClientTest extends UnitTestCase
         $request = $this->mockRequest();
         $jsonrpc = ['jsonrpc'=>ClientInterface::SPEC, 'method'=>'foo', 'params'=>['bar'=>true], 'id'=>123];
         $type = RequestInterface::REQUEST;
+        $uri = 'http://foo';
 
-        $this->httpClient->shouldReceive('createRequest')->once()->with($type, null, ['jsonrpc'=>$jsonrpc])->andReturn($request);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('base_uri')->andReturn($uri);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('defaults')->andReturn([]);
+        $this->messageFactory->shouldReceive('createRequest')->once()->with($type, $uri, [], $jsonrpc)->andReturn($request);
 
         $this->assertSame($request, $this->client->request(123, 'foo', ['bar'=>true]));
     }
@@ -83,8 +101,11 @@ class ClientTest extends UnitTestCase
         $request = $this->mockRequest();
         $jsonrpc = ['jsonrpc'=>ClientInterface::SPEC, 'method'=>'foo', 'id'=>123];
         $type = RequestInterface::REQUEST;
+        $uri = 'http://foo';
 
-        $this->httpClient->shouldReceive('createRequest')->once()->with($type, null, ['jsonrpc'=>$jsonrpc])->andReturn($request);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('base_uri')->andReturn($uri);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('defaults')->andReturn([]);
+        $this->messageFactory->shouldReceive('createRequest')->once()->with($type, $uri, [], $jsonrpc)->andReturn($request);
 
         $this->assertSame($request, $this->client->request(123, 'foo', []));
     }
@@ -126,15 +147,19 @@ class ClientTest extends UnitTestCase
         $requestA->shouldReceive('getBody')->once()->withNoArgs()->andReturn('["foo"]');
         $requestB->shouldReceive('getBody')->once()->withNoArgs()->andReturn('["bar"]');
 
-        $this->httpClient->shouldReceive('createRequest')->once()->with(RequestInterface::BATCH, null, ['jsonrpc'=>[['foo'], ['bar']]])->andReturn($batchRequest);
+        $type = RequestInterface::BATCH;
+        $uri = 'http://foo';
+        $this->messageFactory->shouldReceive('createRequest')->once()->with($type, $uri, [], [['foo'], ['bar']])->andReturn($batchRequest);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('base_uri')->andReturn($uri);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('defaults')->andReturn([]);
         $this->httpClient->shouldReceive('send')->once()->with($batchRequest)->andReturn($batchResponse);
 
         $batchResponse->shouldReceive('getBody')->once()->withNoArgs()->andReturn('[["foo"], ["bar"]]');
         $batchResponse->shouldReceive('getStatusCode')->times(2)->withNoArgs()->andReturn(200);
         $batchResponse->shouldReceive('getHeaders')->times(2)->withNoArgs()->andReturn(['headers']);
 
-        $factory->shouldReceive('createResponse')->once()->with(200, ['headers'], '["foo"]')->andReturn($responseA);
-        $factory->shouldReceive('createResponse')->once()->with(200, ['headers'], '["bar"]')->andReturn($responseB);
+        $this->messageFactory->shouldReceive('createResponse')->once()->with(200, ['headers'], ['foo'])->andReturn($responseA);
+        $this->messageFactory->shouldReceive('createResponse')->once()->with(200, ['headers'], ['bar'])->andReturn($responseB);
 
         $this->assertSame([$responseA, $responseB], $this->client->sendAll([$requestA, $requestB]));
     }

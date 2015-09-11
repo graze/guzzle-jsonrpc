@@ -10,23 +10,20 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
-namespace Graze\GuzzleHttp\JsonRpc\Message;
+namespace Graze\GuzzleHttp\JsonRpc\Middleware;
 
 use Psr\Http\Message\RequestInterface as HttpRequestInterface;
 
-interface RequestInterface extends MessageInterface, HttpRequestInterface
+class RequestHeaderMiddleware
 {
-    const BATCH        = 'BATCH';
-    const REQUEST      = 'REQUEST';
-    const NOTIFICATION = 'NOTIFICATION';
-
     /**
-     * @return string
+     * @param  HttpRequestInterface $response
+     * @return HttpRequestInterface
      */
-    public function getRpcMethod();
-
-    /**
-     * @return array
-     */
-    public function getRpcParams();
+    public function __invoke(HttpRequestInterface $request)
+    {
+        return $request
+            ->withHeader('Accept-Encoding', 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3')
+            ->withHeader('Content-Type', 'application/json');
+    }
 }

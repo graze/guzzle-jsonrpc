@@ -15,9 +15,9 @@ namespace Graze\GuzzleHttp\JsonRpc\Exception;
 use Exception;
 use Graze\GuzzleHttp\JsonRpc\Message\RequestInterface;
 use Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface;
-use GuzzleHttp\Message\RequestInterface as HttpRequestInterface;
-use GuzzleHttp\Message\ResponseInterface as HttpResponseInterface;
 use GuzzleHttp\Exception\RequestException as HttpRequestException;
+use Psr\Http\Message\RequestInterface as HttpRequestInterface;
+use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
 class RequestException extends HttpRequestException
 {

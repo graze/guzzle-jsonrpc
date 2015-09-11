@@ -12,7 +12,7 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc\Message;
 
-use GuzzleHttp\Message\MessageInterface as HttpMessageInterface;
+use Psr\Http\Message\MessageInterface as HttpMessageInterface;
 
 interface MessageInterface extends HttpMessageInterface
 {

@@ -102,6 +102,8 @@ class RequestFunctionalTest extends FunctionalTestCase
 
     public function testBarRequestThrows()
     {
+        $this->markTestSkipped('Event emitter no longer exists on the request');
+
         $id = 'abc';
         $method = 'bar';
         $request = $this->client->request($id, $method, []);
