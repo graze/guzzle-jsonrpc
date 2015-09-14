@@ -43,6 +43,39 @@ $request->sendAll([
 ]);
 ```
 
+### Async requests
+Asynchronous requests are supported by making use of the
+[Guzzle Promises][guzzle-promise] library; an implementation of
+[Promises/A+][promise].
+```php
+<?php
+use Graze\GuzzleHttp\JsonRpc\Client;
+
+// Create the client
+$client = Client::factory('http://localhost:8000');
+
+// Send an async notification
+$promise = $client->sendAsync($client->notification('method', ['key'=>'value']));
+$promise->then(function () {
+    // Do something
+});
+
+// Send an async request that expects a response
+$promise = $client->sendAsync($client->request(123, 'method', ['key'=>'value']));
+$promise->then(function ($response) {
+    // Do something with the response
+});
+
+// Send a batch of requests
+$request->sendAllAsync([
+    $client->request(123, 'method', ['key'=>'value']),
+    $client->request(456, 'method', ['key'=>'value']),
+    $client->notification('method', ['key'=>'value'])
+])->then(function ($responses) {
+    // Do something with the list of responses
+});
+```
+
 ### Throw exception on RPC error
 You can throw an exception if you receive an RPC error response by adding the
 option `[rpc_error => true]` in the client constructor.
@@ -97,7 +130,9 @@ http://www.opensource.org/licenses/mit or in [`LICENSE`][license]
 [vagrant]: http://vagrantup.com
 [jsonrpc]: http://jsonrpc.org/specification
 [guzzle]: https://github.com/guzzle/guzzle
+[promise]: https://promisesaplus.com
 [guzzle-3]: https://github.com/guzzle/guzzle3
+[guzzle-promise]: https://github.com/guzzle/promises
 [branch-3]: https://github.com/graze/guzzle-jsonrpc/tree/guzzle-3
 [branch-4]: https://github.com/graze/guzzle-jsonrpc/tree/guzzle-4
 [branch-5]: https://github.com/graze/guzzle-jsonrpc/tree/guzzle-5
