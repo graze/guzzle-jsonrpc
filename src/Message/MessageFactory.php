@@ -12,42 +12,56 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc\Message;
 
-use Graze\GuzzleHttp\JsonRpc\Utils;
-use GuzzleHttp\Message\MessageFactory as HttpMessageFactory;
-use GuzzleHttp\Stream\Stream;
+use Graze\GuzzleHttp\JsonRpc;
+use GuzzleHttp\Psr7;
+use Psr\Http\Message\RequestInterface as HttpRequestInterface;
+use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
-class MessageFactory extends HttpMessageFactory
+class MessageFactory implements MessageFactoryInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function createRequest($method, $url, array $options = [])
+    public function createRequest($method, $uri, array $headers = [], array $options = [])
     {
-        $config  = isset($options['config']) ? $options['config'] : [];
-        $jsonrpc = isset($options['jsonrpc']) ? $options['jsonrpc'] : [];
-        $jsonrpc = $this->addIdToRequest($method, $jsonrpc);
+        $body = JsonRpc\json_encode($this->addIdToRequest($method, $options));
 
-        unset($options['config'], $options['jsonrpc']);
-
-        $request = new Request('POST', $url, [], null, $config);
-        $request->setHeader('Content-Type', 'application/json');
-        $request->setBody(Stream::factory(Utils::jsonEncode($jsonrpc)));
-
-        $this->applyOptions($request, $options);
-
-        return $request;
+        return new Request('POST', $uri, $headers, $body);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function createResponse($statusCode, array $headers = [], $body = null, array $options = [])
+    public function createResponse($statusCode, array $headers = [], array $options = [])
     {
-        if (null !== $body) {
-            $body = Stream::factory($body);
-        }
+        $body = JsonRpc\json_encode($options);
 
-        return new Response($statusCode, $headers, $body, $options);
+        return new Response($statusCode, $headers, $body);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fromRequest(HttpRequestInterface $request)
+    {
+        return $this->createRequest(
+            $request->getMethod(),
+            $request->getUri(),
+            $request->getHeaders(),
+            JsonRpc\json_decode((string) $request->getBody(), true) ?: []
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fromResponse(HttpResponseInterface $response)
+    {
+        return $this->createResponse(
+            $response->getStatusCode(),
+            $response->getHeaders(),
+            JsonRpc\json_decode((string) $response->getBody(), true) ?: []
+        );
     }
 
     /**

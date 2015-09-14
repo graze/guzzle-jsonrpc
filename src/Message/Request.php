@@ -12,8 +12,8 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc\Message;
 
-use GuzzleHttp\Message\Request as HttpRequest;
-use GuzzleHttp\Utils as GuzzleUtils;
+use Graze\GuzzleHttp\JsonRpc;
+use GuzzleHttp\Psr7\Request as HttpRequest;
 
 class Request extends HttpRequest implements RequestInterface
 {
@@ -55,7 +55,7 @@ class Request extends HttpRequest implements RequestInterface
      */
     protected function getFieldFromBody($key)
     {
-        $rpc = GuzzleUtils::jsonDecode((string) $this->getBody(), true);
+        $rpc = JsonRpc\json_decode((string) $this->getBody(), true);
 
         return isset($rpc[$key]) ? $rpc[$key] : null;
     }

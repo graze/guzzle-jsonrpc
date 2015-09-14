@@ -12,6 +12,7 @@
         }
     ],
     "autoload": {
+        "files": ["src/functions_include.php"],
         "psr-4": {
             "Graze\\GuzzleHttp\\JsonRpc\\": "src"
         }
@@ -22,8 +23,9 @@
         }
     },
     "require": {
-        "php": ">=5.4",
-        "guzzlehttp/guzzle": "~5.0"
+        "php": ">=5.5",
+        "guzzlehttp/guzzle": "^6.0",
+        "psr/http-message": "^1.0"
     },
     "require-dev": {
         "adlawson/timezone": "~1.0",

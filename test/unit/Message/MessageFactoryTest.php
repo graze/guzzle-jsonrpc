@@ -24,23 +24,21 @@ class MessageFactoryTest extends UnitTestCase
 
     public function testInterface()
     {
-        $this->assertInstanceOf('GuzzleHttp\Message\MessageFactoryInterface', $this->factory);
+        $this->assertInstanceOf('Graze\GuzzleHttp\JsonRpc\Message\MessageFactoryInterface', $this->factory);
     }
 
     public function testCreateRequest()
     {
         $method = RequestInterface::REQUEST;
-        $url = 'http://bar';
+        $uri = 'http://bar';
         $options = [
-            'jsonrpc' => [
-                'method' => 'baz'
-            ]
+            'method' => 'baz'
         ];
 
-        $request = $this->factory->createRequest($method, $url, $options);
+        $request = $this->factory->createRequest($method, $uri, [], $options);
         $this->assertInstanceOf('Graze\GuzzleHttp\JsonRpc\Message\RequestInterface', $request);
         $this->assertEquals('POST', $request->getMethod());
-        $this->assertEquals('http://bar', $request->getUrl());
+        $this->assertEquals('http://bar', (string) $request->getUri());
         $this->assertEquals('baz', $request->getRpcMethod());
     }
 
@@ -52,8 +50,8 @@ class MessageFactoryTest extends UnitTestCase
         $response = $this->factory->createResponse($status, $headers);
         $this->assertInstanceOf('Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface', $response);
         $this->assertEquals($status, $response->getStatusCode());
-        $this->assertEquals('application/json', $response->getHeader('Content-Type'));
-        $this->assertEquals(null, $response->getBody());
+        $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
+        $this->assertEquals('[]', (string) $response->getBody());
         $this->assertEquals(null, $response->getRpcVersion());
         $this->assertEquals(null, $response->getRpcResult());
         $this->assertEquals(null, $response->getRpcId());
@@ -61,21 +59,21 @@ class MessageFactoryTest extends UnitTestCase
         $this->assertEquals(null, $response->getRpcErrorMessage());
     }
 
-    public function testCreateResponseWithBody()
+    public function testCreateResponseWithOptions()
     {
         $status = 200;
         $headers = ['Content-Type'=>'application/json'];
-        $body = json_encode([
+        $options = [
             'jsonrpc' => ClientInterface::SPEC,
             'result' => 'foo',
             'id' => 123
-        ]);
+        ];
 
-        $response = $this->factory->createResponse($status, $headers, $body);
+        $response = $this->factory->createResponse($status, $headers, $options);
         $this->assertInstanceOf('Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface', $response);
         $this->assertEquals($status, $response->getStatusCode());
-        $this->assertEquals('application/json', $response->getHeader('Content-Type'));
-        $this->assertEquals($body, (string) $response->getBody());
+        $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
+        $this->assertEquals(json_encode($options), (string) $response->getBody());
         $this->assertEquals(ClientInterface::SPEC, $response->getRpcVersion());
         $this->assertEquals('foo', $response->getRpcResult());
         $this->assertEquals(123, $response->getRpcId());

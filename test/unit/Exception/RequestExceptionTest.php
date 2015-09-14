@@ -37,7 +37,7 @@ class RequestExceptionTest extends UnitTestCase
      */
     public function testCreateClientException($code)
     {
-        $this->request->shouldReceive('getUrl')->once()->withNoArgs()->andReturn('http://foo');
+        $this->request->shouldReceive('getRequestTarget')->once()->withNoArgs()->andReturn('http://foo');
         $this->request->shouldReceive('getRpcMethod')->once()->withNoArgs()->andReturn('foo');
         $this->response->shouldReceive('getRpcErrorCode')->once()->withNoArgs()->andReturn($code);
         $this->response->shouldReceive('getRpcErrorMessage')->once()->withNoArgs()->andReturn('bar');
@@ -52,7 +52,7 @@ class RequestExceptionTest extends UnitTestCase
      */
     public function testCreateServerException($code)
     {
-        $this->request->shouldReceive('getUrl')->once()->withNoArgs()->andReturn('http://foo');
+        $this->request->shouldReceive('getRequestTarget')->once()->withNoArgs()->andReturn('http://foo');
         $this->request->shouldReceive('getRpcMethod')->once()->withNoArgs()->andReturn('foo');
         $this->response->shouldReceive('getRpcErrorCode')->once()->withNoArgs()->andReturn($code);
         $this->response->shouldReceive('getRpcErrorMessage')->once()->withNoArgs()->andReturn('bar');

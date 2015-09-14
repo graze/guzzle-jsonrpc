@@ -15,9 +15,9 @@ namespace Graze\GuzzleHttp\JsonRpc\Exception;
 use Exception;
 use Graze\GuzzleHttp\JsonRpc\Message\RequestInterface;
 use Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface;
-use GuzzleHttp\Message\RequestInterface as HttpRequestInterface;
-use GuzzleHttp\Message\ResponseInterface as HttpResponseInterface;
 use GuzzleHttp\Exception\RequestException as HttpRequestException;
+use Psr\Http\Message\RequestInterface as HttpRequestInterface;
+use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
 class RequestException extends HttpRequestException
 {
@@ -27,7 +27,8 @@ class RequestException extends HttpRequestException
     public static function create(
         HttpRequestInterface $request,
         HttpResponseInterface $response = null,
-        Exception $previous = null
+        Exception $previous = null,
+        array $handlerContext = null
     ) {
         if ($request instanceof RequestInterface && $response instanceof ResponseInterface) {
             static $clientErrorCodes = [-32600, -32601, -32602, -32700];
@@ -41,7 +42,7 @@ class RequestException extends HttpRequestException
                 $className = __NAMESPACE__ . '\\ServerException';
             }
 
-            $message = $label . ' [url] ' . $request->getUrl()
+            $message = $label . ' [uri] ' . $request->getRequestTarget()
                 . ' [method] ' . $request->getRpcMethod()
                 . ' [error code] ' . $errorCode
                 . ' [error message] ' . $response->getRpcErrorMessage();

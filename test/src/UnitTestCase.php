@@ -37,9 +37,14 @@ class UnitTestCase extends TestCase
         return Mockery::mock('GuzzleHttp\ClientInterface');
     }
 
+    protected function mockHttpHandler()
+    {
+        return Mockery::mock('GuzzleHttp\HandlerStack');
+    }
+
     protected function mockMessageFactory()
     {
-        return Mockery::mock('GuzzleHttp\Message\MessageFactoryInterface');
+        return Mockery::mock('Graze\GuzzleHttp\JsonRpc\Message\MessageFactoryInterface');
     }
 
     protected function mockRequest()

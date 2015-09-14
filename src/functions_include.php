@@ -10,19 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
-namespace Graze\GuzzleHttp\JsonRpc\Message;
 
-use Psr\Http\Message\MessageInterface as HttpMessageInterface;
-
-interface MessageInterface extends HttpMessageInterface
-{
-    /**
-     * @return mixed
-     */
-    public function getRpcId();
-
-    /**
-     * @return string
-     */
-    public function getRpcVersion();
+if (!function_exists('Graze\GuzzleHttp\JsonRpc\json_encode')) {
+    require __DIR__ . '/functions.php';
 }

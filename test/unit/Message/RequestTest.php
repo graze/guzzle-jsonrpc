@@ -24,15 +24,13 @@ class RequestTest extends UnitTestCase
 
     public function testInterface()
     {
-        $this->assertInstanceOf('GuzzleHttp\Message\RequestInterface', new Request('foo', 'bar'));
+        $this->assertInstanceOf('Graze\GuzzleHttp\JsonRpc\Message\RequestInterface', new Request('foo', 'bar'));
+        $this->assertInstanceOf('Psr\Http\Message\RequestInterface', new Request('foo', 'bar'));
     }
 
     public function testGetRpcId()
     {
-        $request = new Request('foo', 'bar');
-        $request->setBody($this->stream);
-
-        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+        $request = new Request('foo', 'bar', [], json_encode([
             'id' => 123
         ]));
 
@@ -48,10 +46,7 @@ class RequestTest extends UnitTestCase
 
     public function testGetRpcMethod()
     {
-        $request = new Request('foo', 'bar');
-        $request->setBody($this->stream);
-
-        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+        $request = new Request('foo', 'bar', [], json_encode([
             'method' => 'foo'
         ]));
 
@@ -67,10 +62,7 @@ class RequestTest extends UnitTestCase
 
     public function testGetRpcParams()
     {
-        $request = new Request('foo', 'bar');
-        $request->setBody($this->stream);
-
-        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+        $request = new Request('foo', 'bar', [], json_encode([
             'params' => ['foo'=>'bar']
         ]));
 
@@ -86,10 +78,7 @@ class RequestTest extends UnitTestCase
 
     public function testGetRpcVersion()
     {
-        $request = new Request('foo', 'bar');
-        $request->setBody($this->stream);
-
-        $this->stream->shouldReceive('__toString')->once()->withNoArgs()->andReturn(json_encode([
+        $request = new Request('foo', 'bar', [], json_encode([
             'jsonrpc' => 'foo'
         ]));
 
