@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Guzzle HTTP JSON-RPC
  *
@@ -10,10 +11,10 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc\Message;
 
 use Graze\GuzzleHttp\JsonRpc;
-use GuzzleHttp\Psr7;
 use Psr\Http\Message\RequestInterface as HttpRequestInterface;
 use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
@@ -67,11 +68,12 @@ class MessageFactory implements MessageFactoryInterface
     /**
      * @param  string $method
      * @param  array  $data
+     *
      * @return array
      */
     protected function addIdToRequest($method, array $data)
     {
-        if (RequestInterface::REQUEST === $method && !isset($data['id'])) {
+        if (RequestInterface::REQUEST === $method && ! isset($data['id'])) {
             $data['id'] = uniqid(true);
         }
 

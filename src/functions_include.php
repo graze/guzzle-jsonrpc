@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Guzzle HTTP JSON-RPC
  *
@@ -11,6 +12,6 @@
  * @link http://github.com/graze/guzzle-jsonrpc
  */
 
-if (!function_exists('Graze\GuzzleHttp\JsonRpc\json_encode')) {
-    require __DIR__ . '/functions.php';
+if (! function_exists('Graze\GuzzleHttp\JsonRpc\json_encode')) {
+    require __DIR__.'/functions.php';
 }

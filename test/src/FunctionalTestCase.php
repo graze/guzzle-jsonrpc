@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Guzzle HTTP JSON-RPC
  *
@@ -10,6 +11,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc\Test;
 
 use Graze\GuzzleHttp\JsonRpc\Client;
@@ -25,6 +27,7 @@ class FunctionalTestCase extends TestCase
     /**
      * @param  string $url
      * @param  array  $config
+     *
      * @return Client
      */
     public function createClient($url = null, array $config = [])

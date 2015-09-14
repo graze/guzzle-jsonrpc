@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Guzzle HTTP JSON-RPC
  *
@@ -10,14 +11,15 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc\Message;
 
 use Psr\Http\Message\RequestInterface as HttpRequestInterface;
 
 interface RequestInterface extends MessageInterface, HttpRequestInterface
 {
-    const BATCH        = 'BATCH';
-    const REQUEST      = 'REQUEST';
+    const BATCH = 'BATCH';
+    const REQUEST = 'REQUEST';
     const NOTIFICATION = 'NOTIFICATION';
 
     /**
