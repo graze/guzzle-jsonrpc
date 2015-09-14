@@ -13,5 +13,5 @@
  */
 
 if (! function_exists('Graze\GuzzleHttp\JsonRpc\json_encode')) {
-    require __DIR__.'/functions.php';
+    require __DIR__ . '/functions.php';
 }

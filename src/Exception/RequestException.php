@@ -38,16 +38,16 @@ class RequestException extends HttpRequestException
             $errorCode = $response->getRpcErrorCode();
             if (in_array($errorCode, $clientErrorCodes)) {
                 $label = 'Client RPC error response';
-                $className = __NAMESPACE__.'\\ClientException';
+                $className = __NAMESPACE__ . '\\ClientException';
             } else {
                 $label = 'Server RPC error response';
-                $className = __NAMESPACE__.'\\ServerException';
+                $className = __NAMESPACE__ . '\\ServerException';
             }
 
-            $message = $label.' [uri] '.$request->getRequestTarget()
-                .' [method] '.$request->getRpcMethod()
-                .' [error code] '.$errorCode
-                .' [error message] '.$response->getRpcErrorMessage();
+            $message = $label . ' [uri] ' . $request->getRequestTarget()
+                . ' [method] ' . $request->getRpcMethod()
+                . ' [error code] ' . $errorCode
+                . ' [error message] ' . $response->getRpcErrorMessage();
 
             return new $className($message, $request, $response, $previous);
         }
