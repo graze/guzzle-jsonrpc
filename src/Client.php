@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Guzzle HTTP JSON-RPC
  *
@@ -10,9 +11,9 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc;
 
-use Closure;
 use Graze\GuzzleHttp\JsonRpc;
 use Graze\GuzzleHttp\JsonRpc\Message\MessageFactory;
 use Graze\GuzzleHttp\JsonRpc\Message\MessageFactoryInterface;
@@ -56,6 +57,7 @@ class Client implements ClientInterface
     /**
      * @param  string $uri
      * @param  array  $config
+     *
      * @return Client
      */
     public static function factory($uri, array $config = [])
@@ -68,7 +70,7 @@ class Client implements ClientInterface
         }
 
         return new self(new HttpClient(array_merge($config, [
-            'base_uri' => $uri
+            'base_uri' => $uri,
         ])), $factory);
     }
 
@@ -79,8 +81,8 @@ class Client implements ClientInterface
     {
         return $this->createRequest(RequestInterface::NOTIFICATION, array_filter([
             'jsonrpc' => self::SPEC,
-            'method'  => $method,
-            'params'  => $params
+            'method' => $method,
+            'params' => $params,
         ]));
     }
 
@@ -91,9 +93,9 @@ class Client implements ClientInterface
     {
         return $this->createRequest(RequestInterface::REQUEST, array_filter([
             'jsonrpc' => self::SPEC,
-            'method'  => $method,
-            'params'  => $params,
-            'id'      => $id
+            'method' => $method,
+            'params' => $params,
+            'id' => $id,
         ]));
     }
 
@@ -123,6 +125,7 @@ class Client implements ClientInterface
     /**
      * @param  string           $method
      * @param  array            $options
+     *
      * @return RequestInterface
      */
     protected function createRequest($method, $options)
@@ -136,6 +139,7 @@ class Client implements ClientInterface
 
     /**
      * @param  RequestInterface[] $requests
+     *
      * @return array
      */
     protected function getBatchRequestOptions(array $requests)
@@ -147,6 +151,7 @@ class Client implements ClientInterface
 
     /**
      * @param  ResponseInterface $response
+     *
      * @return ResponseInterface[]
      */
     protected function getBatchResponses(ResponseInterface $response)

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Guzzle HTTP JSON-RPC
  *
@@ -10,6 +11,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc\Middleware;
 
 use Psr\Http\Message\RequestInterface as HttpRequestInterface;
@@ -31,6 +33,7 @@ abstract class AbstractMiddleware
     /**
      * @param  HttpRequestInterface $request
      * @param  array                $options
+     *
      * @return HttpRequestInterface
      */
     public function applyRequest(HttpRequestInterface $request, array $options)
@@ -42,6 +45,7 @@ abstract class AbstractMiddleware
      * @param  HttpRequestInterface  $request
      * @param  HttpResponseInterface $response
      * @param  array                 $options
+     *
      * @return HttpResponseInterface
      */
     public function applyResponse(HttpRequestInterface $request, HttpResponseInterface $response, array $options)

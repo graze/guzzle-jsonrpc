@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Guzzle HTTP JSON-RPC
  *
@@ -10,6 +11,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc\Message;
 
 use Graze\GuzzleHttp\JsonRpc;
@@ -51,6 +53,7 @@ class Request extends HttpRequest implements RequestInterface
 
     /**
      * @param  string $key
+     *
      * @return mixed
      */
     protected function getFieldFromBody($key)
