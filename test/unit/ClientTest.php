@@ -126,6 +126,21 @@ class ClientTest extends UnitTestCase
         $this->assertNull($this->client->send($request));
     }
 
+    public function testSendNotificationAsync()
+    {
+        $request = $this->mockRequest();
+        $response = $this->mockResponse();
+        $promise = $this->mockPromise();
+
+        $request->shouldReceive('getRpcId')->once()->withNoArgs()->andReturn(null);
+        $this->httpClient->shouldReceive('sendAsync')->once()->with($request)->andReturn($promise);
+        $promise->shouldReceive('then')->once()->with(Mockery::on(function ($args) use ($response) {
+            return null === $args($response);
+        }))->andReturn($promise);
+
+        $this->assertSame($promise, $this->client->sendAsync($request));
+    }
+
     public function testSendRequest()
     {
         $request = $this->mockRequest();
@@ -140,6 +155,21 @@ class ClientTest extends UnitTestCase
         $promise->shouldReceive('wait')->once()->withNoArgs()->andReturn($response);
 
         $this->assertSame($response, $this->client->send($request));
+    }
+
+    public function testSendRequestAsync()
+    {
+        $request = $this->mockRequest();
+        $response = $this->mockResponse();
+        $promise = $this->mockPromise();
+
+        $request->shouldReceive('getRpcId')->once()->withNoArgs()->andReturn('foo');
+        $this->httpClient->shouldReceive('sendAsync')->once()->with($request)->andReturn($promise);
+        $promise->shouldReceive('then')->once()->with(Mockery::on(function ($args) use ($response) {
+            return $response === $args($response);
+        }))->andReturn($promise);
+
+        $this->assertSame($promise, $this->client->sendAsync($request));
     }
 
     public function testSendAll()
@@ -178,5 +208,42 @@ class ClientTest extends UnitTestCase
         $this->messageFactory->shouldReceive('createResponse')->once()->with(200, ['headers'], ['bar'])->andReturn($responseB);
 
         $this->assertSame([$responseA, $responseB], $this->client->sendAll([$requestA, $requestB]));
+    }
+
+    public function testSendAllAsync()
+    {
+        $promise = $this->mockPromise();
+        $batchRequest = $this->mockRequest();
+        $requestA = $this->mockRequest();
+        $requestB = $this->mockRequest();
+        $batchResponse = $this->mockResponse();
+        $responseA = $this->mockResponse();
+        $responseB = $this->mockResponse();
+
+        $factory = $this->mockMessageFactory();
+        $this->httpClient->messageFactory = $factory;
+
+        $requestA->shouldReceive('getBody')->once()->withNoArgs()->andReturn('["foo"]');
+        $requestB->shouldReceive('getBody')->once()->withNoArgs()->andReturn('["bar"]');
+
+        $type = RequestInterface::BATCH;
+        $uri = 'http://foo';
+        $this->messageFactory->shouldReceive('createRequest')->once()->with($type, $uri, [], [['foo'], ['bar']])->andReturn($batchRequest);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('base_uri')->andReturn($uri);
+        $this->httpClient->shouldReceive('getConfig')->once()->with('defaults')->andReturn([]);
+        $this->httpClient->shouldReceive('sendAsync')->once()->with($batchRequest)->andReturn($promise);
+
+        $promise->shouldReceive('then')->once()->with(Mockery::on(function ($args) use ($batchResponse, $responseA, $responseB) {
+            return [$responseA, $responseB] === $args($batchResponse);
+        }))->andReturn($promise);
+
+        $batchResponse->shouldReceive('getBody')->once()->withNoArgs()->andReturn('[["foo"], ["bar"]]');
+        $batchResponse->shouldReceive('getStatusCode')->times(2)->withNoArgs()->andReturn(200);
+        $batchResponse->shouldReceive('getHeaders')->times(2)->withNoArgs()->andReturn(['headers']);
+
+        $this->messageFactory->shouldReceive('createResponse')->once()->with(200, ['headers'], ['foo'])->andReturn($responseA);
+        $this->messageFactory->shouldReceive('createResponse')->once()->with(200, ['headers'], ['bar'])->andReturn($responseB);
+
+        $this->assertSame($promise, $this->client->sendAllAsync([$requestA, $requestB]));
     }
 }
