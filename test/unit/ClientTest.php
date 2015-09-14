@@ -114,9 +114,14 @@ class ClientTest extends UnitTestCase
     {
         $request = $this->mockRequest();
         $response = $this->mockResponse();
+        $promise = $this->mockPromise();
 
         $request->shouldReceive('getRpcId')->once()->withNoArgs()->andReturn(null);
-        $this->httpClient->shouldReceive('send')->once()->with($request)->andReturn($response);
+        $this->httpClient->shouldReceive('sendAsync')->once()->with($request)->andReturn($promise);
+        $promise->shouldReceive('then')->once()->with(Mockery::on(function ($args) use ($response) {
+            return null === $args($response);
+        }))->andReturn($promise);
+        $promise->shouldReceive('wait')->once()->withNoArgs()->andReturn(null);
 
         $this->assertNull($this->client->send($request));
     }
@@ -125,15 +130,21 @@ class ClientTest extends UnitTestCase
     {
         $request = $this->mockRequest();
         $response = $this->mockResponse();
+        $promise = $this->mockPromise();
 
         $request->shouldReceive('getRpcId')->once()->withNoArgs()->andReturn('foo');
-        $this->httpClient->shouldReceive('send')->once()->with($request)->andReturn($response);
+        $this->httpClient->shouldReceive('sendAsync')->once()->with($request)->andReturn($promise);
+        $promise->shouldReceive('then')->once()->with(Mockery::on(function ($args) use ($response) {
+            return $response === $args($response);
+        }))->andReturn($promise);
+        $promise->shouldReceive('wait')->once()->withNoArgs()->andReturn($response);
 
         $this->assertSame($response, $this->client->send($request));
     }
 
     public function testSendAll()
     {
+        $promise = $this->mockPromise();
         $batchRequest = $this->mockRequest();
         $requestA = $this->mockRequest();
         $requestB = $this->mockRequest();
@@ -152,7 +163,12 @@ class ClientTest extends UnitTestCase
         $this->messageFactory->shouldReceive('createRequest')->once()->with($type, $uri, [], [['foo'], ['bar']])->andReturn($batchRequest);
         $this->httpClient->shouldReceive('getConfig')->once()->with('base_uri')->andReturn($uri);
         $this->httpClient->shouldReceive('getConfig')->once()->with('defaults')->andReturn([]);
-        $this->httpClient->shouldReceive('send')->once()->with($batchRequest)->andReturn($batchResponse);
+        $this->httpClient->shouldReceive('sendAsync')->once()->with($batchRequest)->andReturn($promise);
+
+        $promise->shouldReceive('then')->once()->with(Mockery::on(function ($args) use ($batchResponse, $responseA, $responseB) {
+            return [$responseA, $responseB] === $args($batchResponse);
+        }))->andReturn($promise);
+        $promise->shouldReceive('wait')->once()->withNoArgs()->andReturn([$responseA, $responseB]);
 
         $batchResponse->shouldReceive('getBody')->once()->withNoArgs()->andReturn('[["foo"], ["bar"]]');
         $batchResponse->shouldReceive('getStatusCode')->times(2)->withNoArgs()->andReturn(200);

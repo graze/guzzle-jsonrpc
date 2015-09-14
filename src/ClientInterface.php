@@ -16,6 +16,7 @@ namespace Graze\GuzzleHttp\JsonRpc;
 
 use Graze\GuzzleHttp\JsonRpc\Message\RequestInterface;
 use Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface;
+use GuzzleHttp\Promise\PromiseInterface;
 
 interface ClientInterface
 {
@@ -71,6 +72,18 @@ interface ClientInterface
     public function send(RequestInterface $request);
 
     /**
+     * Send a request asynchronously.
+     *
+     * This method sends a single request to the RPC server. The type of
+     * response is determined by the type of request.
+     *
+     * @param  RequestInterface       $request
+     *
+     * @return PromiseInterface
+     */
+    public function sendAsync(RequestInterface $request);
+
+    /**
      * Send a batch of requests.
      *
      * The intention of this method is to send the requests as a Batch Request
@@ -84,4 +97,19 @@ interface ClientInterface
      * @return ResponseInterface[]
      */
     public function sendAll(array $requests);
+
+    /**
+     * Send an asynchronous batch of requests.
+     *
+     * The intention of this method is to send the requests as a Batch Request
+     * where possible, and as separate requests where not possible. One reason
+     * a batch request isn't possible is where request URLs don't match.
+     *
+     * @link   http://www.jsonrpc.org/specification#batch
+     *
+     * @param  RequestInterface[]  $requests
+     *
+     * @return PromiseInterface
+     */
+    public function sendAllAsync(array $requests);
 }
