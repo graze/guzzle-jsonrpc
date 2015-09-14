@@ -7,7 +7,7 @@
 
 This library implements [JSON-RPC 2.0][jsonrpc] for the Guzzle HTTP client. We
 try to support all commonly used versions of Guzzle including:
- - [GuzzleHTTP 5][guzzle] on [`master`][branch-master] branch, `>= 3.0` releases
+ - [GuzzleHTTP 6][guzzle] on [`master`][branch-master] branch, `>= 3.0` releases
  - [GuzzleHTTP 5][guzzle] on [`guzzle-5`][branch-5] branch, `>= 2.1` releases
  - [GuzzleHTTP 4][guzzle] on [`guzzle-4`][branch-4] branch, `2.0.x` releases
  - [Guzzle 3][guzzle-3] on [`guzzle-3`][branch-3] branch, `1.x` releases
