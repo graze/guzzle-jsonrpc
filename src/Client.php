@@ -104,9 +104,21 @@ class Client implements ClientInterface
      */
     public function send(RequestInterface $request)
     {
-        $response = $this->httpClient->send($request);
+        $promise = $this->sendAsync($request);
 
-        return $request->getRpcId() ? $response : null;
+        return $promise->wait();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sendAsync(RequestInterface $request)
+    {
+        return $this->httpClient->sendAsync($request)->then(
+            function (ResponseInterface $response) use ($request) {
+                return $request->getRpcId() ? $response : null;
+            }
+        );
     }
 
     /**
@@ -114,12 +126,22 @@ class Client implements ClientInterface
      */
     public function sendAll(array $requests)
     {
-        $response = $this->httpClient->send($this->createRequest(
+        $promise = $this->sendAllAsync($requests);
+
+        return $promise->wait();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sendAllAsync(array $requests)
+    {
+        return $this->httpClient->sendAsync($this->createRequest(
             RequestInterface::BATCH,
             $this->getBatchRequestOptions($requests)
-        ));
-
-        return $this->getBatchResponses($response);
+        ))->then(function (ResponseInterface $response) {
+            return $this->getBatchResponses($response);
+        });
     }
 
     /**

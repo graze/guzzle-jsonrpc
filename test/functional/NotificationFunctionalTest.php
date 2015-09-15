@@ -21,6 +21,14 @@ class NotificationFunctionalTest extends FunctionalTestCase
         $this->client = $this->createClient();
     }
 
+    public function tearDown()
+    {
+        if (isset($this->promise)) {
+            $this->promise->wait(false); // Stop PHPUnit closing before async assertions
+            unset($this->promise);
+        }
+    }
+
     public function testNotifyRequest()
     {
         $method = 'notify';
@@ -36,6 +44,23 @@ class NotificationFunctionalTest extends FunctionalTestCase
         $this->assertNull($response);
     }
 
+    public function testAsyncNotifyRequest()
+    {
+        $method = 'notify';
+        $params = ['foo'=>true];
+        $request = $this->client->notification($method, $params);
+        $this->promise = $this->client->sendAsync($request);
+
+        $this->promise->then(function ($response) use ($request, $method, $params) {
+            $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
+            $this->assertEquals(null, $request->getRpcId());
+            $this->assertEquals($method, $request->getRpcMethod());
+            $this->assertEquals($params, $request->getRpcParams());
+
+            $this->assertNull($response);
+        });
+    }
+
     public function testNotifyRequestWithInvalidParams()
     {
         $method = 'notify';
@@ -49,5 +74,22 @@ class NotificationFunctionalTest extends FunctionalTestCase
         $this->assertEquals($params, $request->getRpcParams());
 
         $this->assertNull($response);
+    }
+
+    public function testAsyncNotifyRequestWithInvalidParams()
+    {
+        $method = 'notify';
+        $params = ['foo'=>'bar'];
+        $request = $this->client->notification($method, $params);
+        $this->promise = $this->client->sendAsync($request);
+
+        $this->promise->then(function ($response) use ($request, $method, $params) {
+            $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
+            $this->assertEquals(null, $request->getRpcId());
+            $this->assertEquals($method, $request->getRpcMethod());
+            $this->assertEquals($params, $request->getRpcParams());
+
+            $this->assertNull($response);
+        });
     }
 }
