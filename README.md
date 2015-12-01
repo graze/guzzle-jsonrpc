@@ -36,7 +36,7 @@ $client->send($client->notification('method', ['key'=>'value']));
 $client->send($client->request(123, 'method', ['key'=>'value']));
 
 // Send a batch of requests
-$request->sendAll([
+$client->sendAll([
     $client->request(123, 'method', ['key'=>'value']),
     $client->request(456, 'method', ['key'=>'value']),
     $client->notification('method', ['key'=>'value'])
