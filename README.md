@@ -67,7 +67,7 @@ $promise->then(function ($response) {
 });
 
 // Send a batch of requests
-$request->sendAllAsync([
+$client->sendAllAsync([
     $client->request(123, 'method', ['key'=>'value']),
     $client->request(456, 'method', ['key'=>'value']),
     $client->notification('method', ['key'=>'value'])
