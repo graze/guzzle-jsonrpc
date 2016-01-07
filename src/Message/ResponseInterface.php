@@ -31,5 +31,10 @@ interface ResponseInterface extends MessageInterface, HttpResponseInterface
     /**
      * @return mixed
      */
+    public function getRpcErrorData();
+
+    /**
+     * @return mixed
+     */
     public function getRpcResult();
 }

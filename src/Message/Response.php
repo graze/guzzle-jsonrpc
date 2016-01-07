@@ -42,6 +42,16 @@ class Response extends HttpResponse implements ResponseInterface
     /**
      * {@inheritdoc}
      */
+    public function getRpcErrorData()
+    {
+        $error = $this->getFieldFromBody('error');
+
+        return isset($error['data']) ? $error['data'] : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getRpcId()
     {
         return $this->getFieldFromBody('id');
