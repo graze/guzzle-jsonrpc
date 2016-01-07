@@ -48,6 +48,7 @@ class RequestFunctionalTest extends FunctionalTestCase
         $this->assertEquals($id, $response->getRpcId());
         $this->assertEquals(null, $response->getRpcErrorCode());
         $this->assertEquals(null, $response->getRpcErrorMessage());
+        $this->assertEquals(null, $response->getRpcErrorData());
     }
 
     public function testConcatAsyncRequest()
@@ -69,6 +70,7 @@ class RequestFunctionalTest extends FunctionalTestCase
             $this->assertEquals($id, $response->getRpcId());
             $this->assertEquals(null, $response->getRpcErrorCode());
             $this->assertEquals(null, $response->getRpcErrorMessage());
+            $this->assertEquals(null, $response->getRpcErrorData());
         });
     }
 
@@ -90,6 +92,7 @@ class RequestFunctionalTest extends FunctionalTestCase
         $this->assertEquals($id, $response->getRpcId());
         $this->assertEquals(null, $response->getRpcErrorCode());
         $this->assertEquals(null, $response->getRpcErrorMessage());
+        $this->assertEquals(null, $response->getRpcErrorData());
     }
 
     public function testSumAsyncRequest()
@@ -111,6 +114,7 @@ class RequestFunctionalTest extends FunctionalTestCase
             $this->assertEquals($id, $response->getRpcId());
             $this->assertEquals(null, $response->getRpcErrorCode());
             $this->assertEquals(null, $response->getRpcErrorMessage());
+            $this->assertEquals(null, $response->getRpcErrorData());
         });
     }
 
@@ -131,6 +135,7 @@ class RequestFunctionalTest extends FunctionalTestCase
         $this->assertEquals($id, $response->getRpcId());
         $this->assertEquals(null, $response->getRpcErrorCode());
         $this->assertEquals(null, $response->getRpcErrorMessage());
+        $this->assertEquals(null, $response->getRpcErrorData());
     }
 
     public function testFooAsyncRequest()
@@ -151,6 +156,7 @@ class RequestFunctionalTest extends FunctionalTestCase
             $this->assertEquals($id, $response->getRpcId());
             $this->assertEquals(null, $response->getRpcErrorCode());
             $this->assertEquals(null, $response->getRpcErrorMessage());
+            $this->assertEquals(null, $response->getRpcErrorData());
         });
     }
 
@@ -171,6 +177,7 @@ class RequestFunctionalTest extends FunctionalTestCase
         $this->assertEquals($id, $response->getRpcId());
         $this->assertTrue(is_int($response->getRpcErrorCode()));
         $this->assertTrue(is_string($response->getRpcErrorMessage()));
+        $this->assertEquals(null, $response->getRpcErrorData());
     }
 
     public function testBarAsyncRequest()
@@ -191,6 +198,7 @@ class RequestFunctionalTest extends FunctionalTestCase
             $this->assertEquals($id, $response->getRpcId());
             $this->assertTrue(is_int($response->getRpcErrorCode()));
             $this->assertTrue(is_string($response->getRpcErrorMessage()));
+            $this->assertEquals(null, $response->getRpcErrorData());
         });
     }
 
