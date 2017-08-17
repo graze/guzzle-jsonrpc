@@ -2,6 +2,11 @@ language: php
 
 dist: trusty
 
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+    - $HOME/.npm
+
 php:
   - 5.5
   - 5.6
@@ -15,6 +20,10 @@ matrix:
     - php: hhvm
     - php: nightly
   fast_finish: true
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
 
 before_script:
   - make deps-js
