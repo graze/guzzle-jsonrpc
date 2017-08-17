@@ -79,10 +79,10 @@ class ResponseTest extends UnitTestCase
     public function testGetRpcErrorData()
     {
         $response = new Response(200, [], json_encode([
-            'error' => ['data' => array()]
+            'error' => ['data' => []]
         ]));
 
-        $this->assertEquals(array(), $response->getRpcErrorData());
+        $this->assertEquals([], $response->getRpcErrorData());
     }
 
     public function testGetRpcErrorDataIsNull()

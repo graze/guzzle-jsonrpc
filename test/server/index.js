@@ -38,4 +38,5 @@ var server = rpc.server({
     }
 });
 
-server.http().listen(8000);
+console.log('listening on port 80');
+server.http().listen(80);

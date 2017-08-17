@@ -1,33 +1,38 @@
-NJS := `which node`
-PWD := `pwd`
-PID := $(PWD)/.pid
-
-.PHONY: cs test
+.PHONY: lint lint-fix test
 
 all: deps
 
-cs:
-	@vendor/bin/php-cs-fixer fix src
+lint: ## Run phpcs against the code.
+	@docker-compose run --rm test vendor/bin/phpcs -p --warning-severity=0 --ignore=test/server src/ test/
+
+lint-fix: ## Run phpcsf and fix possible lint errors.
+	@docker-compose run --rm test vendor/bin/phpcbf -p --ignore=test/server src/ test/
 
 deps: deps-php deps-js
 
 deps-js:
-	@cd test/server && npm install
+	@docker-compose run --rm node yarn install
 
 deps-php:
-	@composer install
+	@docker-compose run --rm composer install --prefer-dist
 
 server-start:
-	@start-stop-daemon -S -b -m -o -p $(PID) -d $(PWD)/test/server -x $(NJS) -- index.js
+	@docker-compose up -d node
 
 server-stop:
-	@start-stop-daemon -K -p $(PID)
+	@docker-compose stop node
 
 test: test-unit test-functional
 
 test-functional: server-start
-	@vendor/bin/phpunit --testsuite functional
+	@docker-compose run --rm test vendor/bin/phpunit --testsuite functional
 	@$(MAKE) server-stop
 
 test-unit:
-	@vendor/bin/phpunit --testsuite unit
+	@docker-compose run --rm test vendor/bin/phpunit --testsuite unit
+
+test-coverage: ## Run all tests and output coverage to the console.
+	@docker-compose run --rm test phpdbg7 -qrr vendor/bin/phpunit --coverage-text
+
+test-coverage-clover: ## Run all tests and output clover coverage to file.
+	@docker-compose run --rm test phpdbg7 -qrr vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover

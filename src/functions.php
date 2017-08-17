@@ -51,11 +51,11 @@ function json_decode($json, $assoc = false, $depth = 512, $options = 0)
     if (JSON_ERROR_NONE !== json_last_error()) {
         $last = json_last_error();
         throw new InvalidArgumentException(
-             'Unable to parse JSON data: '
-             . (isset($jsonErrors[$last])
-                 ? $jsonErrors[$last]
-                 : 'Unknown error')
-         );
+            'Unable to parse JSON data: '
+            . (isset($jsonErrors[$last])
+                ? $jsonErrors[$last]
+                : 'Unknown error')
+        );
     }
 
     return $data;

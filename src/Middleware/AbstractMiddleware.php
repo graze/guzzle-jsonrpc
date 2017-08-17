@@ -19,6 +19,11 @@ use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
 abstract class AbstractMiddleware
 {
+    /**
+     * @param callable $fn
+     *
+     * @return \Closure
+     */
     public function __invoke(callable $fn)
     {
         return function (HttpRequestInterface $request, array $options) use ($fn) {

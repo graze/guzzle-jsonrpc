@@ -20,8 +20,8 @@ use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 interface MessageFactoryInterface
 {
     /**
-     * @param strint            $uri
      * @param string            $method
+     * @param string            $uri
      * @param array             $headers
      * @param array             $options
      *
@@ -46,9 +46,9 @@ interface MessageFactoryInterface
     public function fromRequest(HttpRequestInterface $request);
 
     /**
-     * @param  HttpRequestInterface $request
+     * @param HttpResponseInterface $response
      *
-     * @return RequestInterface
+     * @return ResponseInterface
      */
     public function fromResponse(HttpResponseInterface $response);
 }
