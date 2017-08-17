@@ -1,12 +1,10 @@
-.PHONY: lint lint-fix test
+.PHONY: lint test test-unit test-functional test-coverage test-coverage-clover
+.PHONY: server-start server-stop
 
 all: deps
 
 lint: ## Run phpcs against the code.
 	@docker-compose run --rm test vendor/bin/phpcs -p --warning-severity=0 --ignore=test/server src/ test/
-
-lint-fix: ## Run phpcsf and fix possible lint errors.
-	@docker-compose run --rm test vendor/bin/phpcbf -p --ignore=test/server src/ test/
 
 deps: deps-php deps-js
 

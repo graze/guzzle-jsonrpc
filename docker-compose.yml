@@ -4,7 +4,7 @@ services:
   test:
     image: graze/php-alpine:test
     volumes:
-      - .:/srv
+      - .:/srv:cached
     working_dir: /srv
 
   node:
