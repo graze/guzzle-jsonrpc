@@ -67,7 +67,8 @@ class Response extends HttpResponse implements ResponseInterface
      */
     protected function getFieldFromBody($key)
     {
-        $rpc = GuzzleHttp\json_decode((string) $this->getBody(), true);
+        $body = (string) $this->getBody();
+        $rpc = ($body !== '') ? GuzzleHttp\json_decode($body, true) : [];
 
         return isset($rpc[$key]) ? $rpc[$key] : null;
     }

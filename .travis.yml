@@ -20,6 +20,7 @@ matrix:
   allow_failures:
     - php: hhvm
     - php: nightly
+    - php: 7.1
   fast_finish: true
 
 before_install:
