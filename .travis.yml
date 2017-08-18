@@ -1,19 +1,39 @@
 language: php
 
-php: [5.4, 5.5, 5.6, hhvm, hhvm-nightly]
+dist: trusty
 
-before_script:
- - ~/.nvm/nvm.sh install v0.10.32
- - ~/.nvm/nvm.sh run v0.10.32
- - make
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+    - $HOME/.npm
 
-script:
- - make test
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7
+  - 7.1
+  - hhvm
+  - nightly
 
 matrix:
   allow_failures:
-    - php: hhvm-nightly
+    - php: hhvm
+    - php: nightly
   fast_finish: true
 
-notifications:
-  email: false
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+
+before_script:
+  - make deps-js
+  - travis_retry composer update --no-interaction
+
+script:
+  - vendor/bin/phpcs -p --warning-severity=0 --ignore=test/server src/ test/
+  - vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover --testsuite unit
+  - make test-functional
+
+after_script:
+  - test -f ./tests/report/coverage.clover && (wget https://scrutinizer-ci.com/ocular.phar; php ocular.phar code-coverage:upload --format=php-clover ./tests/report/coverage.clover)

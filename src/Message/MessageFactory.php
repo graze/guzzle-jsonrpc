@@ -20,6 +20,13 @@ class MessageFactory extends HttpMessageFactory
 {
     /**
      * {@inheritdoc}
+     *
+     * @param string     $method  HTTP method (GET, POST, PUT, etc.)
+     * @param string|Url $url     HTTP URL to connect to
+     * @param array      $options Array of options to apply to the request
+     *
+     * @return RequestInterface
+     * @link http://docs.guzzlephp.org/clients.html#request-options
      */
     public function createRequest($method, $url, array $options = [])
     {
@@ -40,6 +47,16 @@ class MessageFactory extends HttpMessageFactory
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $statusCode HTTP status code
+     * @param array  $headers    Response headers
+     * @param mixed  $body       Response body
+     * @param array  $options    Response options
+     *     - protocol_version: HTTP protocol version
+     *     - header_factory: Factory used to create headers
+     *     - And any other options used by a concrete message implementation
+     *
+     * @return ResponseInterface
      */
     public function createResponse($statusCode, array $headers = [], $body = null, array $options = [])
     {

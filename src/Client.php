@@ -20,6 +20,7 @@ use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\ClientInterface as HttpClientInterface;
 use GuzzleHttp\Adapter\ParallelAdapterInterface;
 use GuzzleHttp\Message\MessageFactoryInterface;
+use GuzzleHttp\Message\ResponseInterface;
 
 class Client implements ClientInterface
 {
@@ -60,6 +61,11 @@ class Client implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @link   http://www.jsonrpc.org/specification#notification
+     * @param  string           $method
+     * @param  array            $params
+     * @return RequestInterface
      */
     public function notification($method, array $params = null)
     {
@@ -72,6 +78,12 @@ class Client implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @link   http://www.jsonrpc.org/specification#request_object
+     * @param  mixed            $id
+     * @param  string           $method
+     * @param  array            $params
+     * @return RequestInterface
      */
     public function request($id, $method, array $params = null)
     {
@@ -85,6 +97,9 @@ class Client implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param  RequestInterface       $request
+     * @return ResponseInterface|null
      */
     public function send(RequestInterface $request)
     {
@@ -95,6 +110,10 @@ class Client implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @link   http://www.jsonrpc.org/specification#batch
+     * @param  RequestInterface[]  $requests
+     * @return ResponseInterface[]
      */
     public function sendAll(array $requests)
     {
@@ -130,7 +149,7 @@ class Client implements ClientInterface
      * @param  array            $options
      * @return RequestInterface
      */
-    protected function createRequest($method, $options)
+    protected function createRequest($method, array $options)
     {
         return $this->httpClient->createRequest($method, null, [
             'jsonrpc' => $options

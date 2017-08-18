@@ -16,6 +16,9 @@ use Graze\GuzzleHttp\JsonRpc\Test\UnitTestCase;
 
 class RequestSubscriberTest extends UnitTestCase
 {
+    /** @var RequestSubscriber */
+    private $subscriber;
+
     public function setUp()
     {
         $this->subscriber = new RequestSubscriber();

@@ -23,6 +23,12 @@ class RequestException extends HttpRequestException
 {
     /**
      * {@inheritdoc}
+     *
+     * @param HttpRequestInterface  $request  Request
+     * @param HttpResponseInterface $response Response received
+     * @param \Exception        $previous Previous exception
+     *
+     * @return HttpRequestException
      */
     public static function create(
         HttpRequestInterface $request,

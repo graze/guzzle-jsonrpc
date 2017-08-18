@@ -17,7 +17,7 @@ use GuzzleHttp\Message\ResponseInterface as HttpResponseInterface;
 interface ResponseInterface extends MessageInterface, HttpResponseInterface
 {
     /**
-     * @return integer
+     * @return int
      */
     public function getRpcErrorCode();
 

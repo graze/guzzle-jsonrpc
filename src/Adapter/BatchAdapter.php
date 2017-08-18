@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of Guzzle HTTP JSON-RPC
  *
  * Copyright (c) 2014 Nature Delivered Ltd. <http://graze.com>
@@ -10,14 +10,15 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc\Adapter;
 
 use Graze\GuzzleHttp\JsonRpc\Message\RequestInterface;
 use Graze\GuzzleHttp\JsonRpc\Subscriber\BatchSubscriber;
 use GuzzleHttp;
-use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Adapter\ParallelAdapterInterface;
 use GuzzleHttp\Adapter\TransactionInterface;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Message\MessageFactoryInterface;
 use Iterator;
 use LimitIterator;
@@ -48,19 +49,23 @@ class BatchAdapter implements ParallelAdapterInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param \Iterator $transactions Iterator that yields TransactionInterface
+     * @param int       $max          Max number of requests to send in parallel
      */
     public function sendAll(Iterator $transactions, $max)
     {
         $limited = new LimitIterator($transactions, 0, $max);
-        $client  = $this->getClientFromTransactions($limited);
+        $client = $this->getClientFromTransactions($limited);
         $request = $this->createRequest($client, $limited);
 
         $client->send($request);
     }
 
     /**
-     * @param  ClientInterface  $client
-     * @param  Iterator         $transactions
+     * @param  ClientInterface $client
+     * @param  Iterator        $transactions
+     *
      * @return RequestInterface
      */
     protected function createRequest(ClientInterface $client, Iterator $transactions)
@@ -74,7 +79,8 @@ class BatchAdapter implements ParallelAdapterInterface
     }
 
     /**
-     * @param  Iterator        $transactions
+     * @param  Iterator $transactions
+     *
      * @return ClientInterface
      * @throws LogicException  If the client isn't the same in all transactions
      */
@@ -95,13 +101,14 @@ class BatchAdapter implements ParallelAdapterInterface
 
     /**
      * @param  Iterator $transactions
+     *
      * @return array
      */
     protected function getDataFromTransactions(Iterator $transactions)
     {
         return array_map(function (TransactionInterface $transaction) {
             $request = $transaction->getRequest();
-            $data = GuzzleHttp\json_decode((string) $request->getBody());
+            $data = GuzzleHttp\json_decode((string)$request->getBody());
 
             return $data;
         }, iterator_to_array($transactions));
