@@ -1,4 +1,5 @@
 <?php
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use Graze\Guzzle\JsonRpc\JsonRpcClientInterface;
@@ -18,6 +19,11 @@ class BatchRequestTest extends TestCase
         $this->batch->setClient($this->client);
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return string
+     */
     protected function jsonEncode($data)
     {
         return json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
@@ -35,17 +41,17 @@ class BatchRequestTest extends TestCase
 
     public function testSend()
     {
-        $responseData = array(array('jsonrpc'=>'2.0', 'result'=>array('foo')));
+        $responseData = [['jsonrpc' =>'2.0', 'result' => ['foo']]];
         $this->httpResponse->shouldReceive('json')->once()->withNoArgs()->andReturn($responseData);
         $this->client->shouldReceive('send')->once()->with($this->batch)->andReturn($this->httpResponse);
 
-        $this->assertSame(array(), $this->batch->send());
+        $this->assertSame([], $this->batch->send());
     }
 
     public function testSendWithIdAndSuccessfulResponse()
     {
-        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
-        $responseData = array(array('jsonrpc'=>'2.0', 'id'=>1, 'result'=>array('foo')));
+        $requestData = ['jsonrpc' =>'2.0', 'method' =>'foo', 'id' =>1];
+        $responseData = [['jsonrpc' =>'2.0', 'id' =>1, 'result' => ['foo']]];
 
         $this->batch->addRequest($this->request);
         $this->client->shouldReceive('send')->once()->with($this->batch)->andReturn($this->httpResponse);
@@ -58,13 +64,13 @@ class BatchRequestTest extends TestCase
         $result = $this->batch->send();
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Response', reset($result));
-        $this->assertSame($this->jsonEncode(array($requestData)), (string) $this->batch->getBody());
+        $this->assertSame($this->jsonEncode([$requestData]), (string) $this->batch->getBody());
     }
 
     public function testSendWithIdAndNullResult()
     {
-        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
-        $responseData = array(array('jsonrpc'=>'2.0', 'id'=>1, 'result'=>null));
+        $requestData = ['jsonrpc' =>'2.0', 'method' =>'foo', 'id' =>1];
+        $responseData = [['jsonrpc' =>'2.0', 'id' =>1, 'result' =>null]];
 
         $this->batch->addRequest($this->request);
         $this->client->shouldReceive('send')->once()->with($this->batch)->andReturn($this->httpResponse);
@@ -77,13 +83,13 @@ class BatchRequestTest extends TestCase
         $result = $this->batch->send();
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Response', reset($result));
-        $this->assertSame($this->jsonEncode(array($requestData)), (string) $this->batch->getBody());
+        $this->assertSame($this->jsonEncode([$requestData]), (string) $this->batch->getBody());
     }
 
     public function testSendWithIdReturnsError()
     {
-        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
-        $responseData = array(array('jsonrpc'=>'2.0', 'id'=>1, 'error'=>array('message'=>'', 'code'=>0)));
+        $requestData = ['jsonrpc' =>'2.0', 'method' =>'foo', 'id' =>1];
+        $responseData = [['jsonrpc' =>'2.0', 'id' =>1, 'error' => ['message' =>'', 'code' =>0]]];
 
         $this->batch->addRequest($this->request);
         $this->client->shouldReceive('send')->once()->with($this->batch)->andReturn($this->httpResponse);
@@ -96,13 +102,13 @@ class BatchRequestTest extends TestCase
         $result = $this->batch->send();
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\ErrorResponse', reset($result));
-        $this->assertSame($this->jsonEncode(array($requestData)), (string) $this->batch->getBody());
+        $this->assertSame($this->jsonEncode([$requestData]), (string) $this->batch->getBody());
     }
 
     public function testSendWithDuplicateId()
     {
-        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
-        $responseData = array(array('jsonrpc'=>'2.0', 'id'=>1, 'result'=>null));
+        $requestData = ['jsonrpc' =>'2.0', 'method' =>'foo', 'id' =>1];
+        $responseData = [['jsonrpc' =>'2.0', 'id' =>1, 'result' =>null]];
 
         $requestB = m::mock('Graze\Guzzle\JsonRpc\Message\Request');
 
@@ -118,8 +124,8 @@ class BatchRequestTest extends TestCase
 
     public function testSendWithIdThrowsIfIdNotReturned()
     {
-        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
-        $responseData = array();
+        $requestData = ['jsonrpc' =>'2.0', 'method' =>'foo', 'id' =>1];
+        $responseData = [];
 
         $this->batch->addRequest($this->request);
         $this->client->shouldReceive('send')->once()->with($this->batch)->andReturn($this->httpResponse);

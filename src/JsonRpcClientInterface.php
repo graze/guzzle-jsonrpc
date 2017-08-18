@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\Guzzle\JsonRpc;
 
 use Graze\Guzzle\JsonRpc\Message\BatchRequest;
@@ -37,7 +38,7 @@ interface JsonRpcClientInterface extends ClientInterface
      * @param array $headers
      * @return BatchRequest
      */
-    public function batch(array $requests, $uri = null, array $headers = array());
+    public function batch(array $requests, $uri = null, array $headers = []);
 
     /**
      * Build a notification request object
@@ -53,7 +54,7 @@ interface JsonRpcClientInterface extends ClientInterface
      * @param array $headers
      * @return Request
      */
-    public function notification($method, array $params = array(), $uri = null, array $headers = array());
+    public function notification($method, array $params = [], $uri = null, array $headers = []);
 
     /**
      * Build a request object
@@ -69,5 +70,5 @@ interface JsonRpcClientInterface extends ClientInterface
      * @param array $headers
      * @return Request
      */
-    public function request($method, $id, array $params = array(), $uri = null, array $headers = array());
+    public function request($method, $id, array $params = [], $uri = null, array $headers = []);
 }

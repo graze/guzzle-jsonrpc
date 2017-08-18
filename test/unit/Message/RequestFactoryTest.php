@@ -1,4 +1,5 @@
 <?php
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use Graze\Guzzle\JsonRpc\JsonRpcClientInterface;

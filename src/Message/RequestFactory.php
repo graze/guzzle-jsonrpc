@@ -10,23 +10,34 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
+use Guzzle\Common\Collection;
+use Guzzle\Http\EntityBodyInterface;
 use Guzzle\Http\Message\RequestFactory as BaseRequestFactory;
+use Guzzle\Http\Url;
 use RuntimeException;
 
 class RequestFactory extends BaseRequestFactory
 {
-    /**
-     * @var string
-     **/
+    /** @var string */
     protected $rpcBatchRequestClass = 'Graze\\Guzzle\\JsonRpc\\Message\\BatchRequest';
+    /** @var string */
     protected $rpcRequestClass = 'Graze\\Guzzle\\JsonRpc\\Message\\Request';
 
     /**
      * {@inheritdoc}
+     *
+     * @param string                                    $method  HTTP method (GET, POST, PUT, PATCH, HEAD, DELETE, ...)
+     * @param string|Url                                $url     HTTP URL to connect to
+     * @param array|Collection                          $headers HTTP headers
+     * @param string|resource|array|EntityBodyInterface $body    Body to send in the request
+     * @param array                                     $options Array of options to apply to the request
+     *
+     * @return RequestInterface
      */
-    public function create($method, $url, $headers = null, $body = null, array $options = array())
+    public function create($method, $url, $headers = null, $body = null, array $options = [])
     {
         switch ($method) {
             case RequestInterface::BATCH:
@@ -37,7 +48,7 @@ class RequestFactory extends BaseRequestFactory
                 $class = $this->rpcRequestClass;
                 break;
             default:
-                throw new RuntimeExteption('Unsupported method type "' . $method . '".');
+                throw new RuntimeException('Unsupported method type "' . $method . '".');
         }
 
         $request = new $class($url, $headers);

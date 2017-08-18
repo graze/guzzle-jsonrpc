@@ -1,12 +1,38 @@
 language: php
 
-php: [5.3, 5.4, 5.5, 5.6, hhvm]
+dist: trusty
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+    - $HOME/.npm
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7
+  - 7.1
+  - hhvm
+  - nightly
+
+matrix:
+  allow_failures:
+    - php: hhvm
+    - php: nightly
+    - php: 7.1
+  fast_finish: true
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 
 before_script:
- - composer install --dev
+  - travis_retry composer update --no-interaction
 
 script:
- - vendor/bin/phpunit
+  - vendor/bin/phpcs -p --warning-severity=0 --ignore=test/server src/ test/
+  - vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover --testsuite unit
 
-notifications:
-  email: false
+after_script:
+  - test -f ./tests/report/coverage.clover && (wget https://scrutinizer-ci.com/ocular.phar; php ocular.phar code-coverage:upload --format=php-clover ./tests/report/coverage.clover)

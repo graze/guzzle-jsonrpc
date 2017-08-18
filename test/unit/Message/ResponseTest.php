@@ -1,4 +1,5 @@
 <?php
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use Graze\Guzzle\JsonRpc\JsonRpcClientInterface;
@@ -25,13 +26,13 @@ class ResponseTest extends TestCase
     public function testWithValidData()
     {
         $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
-        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn([]);
 
-        $responseData = array(
+        $responseData = [
             'jsonrpc' => '2.0',
-            'result' => array('foo', 'bar'),
+            'result' => ['foo', 'bar'],
             'id' => 1
-        );
+        ];
 
         $response = new Response($this->httpResponse, $responseData);
 
@@ -43,39 +44,39 @@ class ResponseTest extends TestCase
     public function testWithNoId()
     {
         $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
-        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn([]);
 
         $this->setExpectedException('OutOfRangeException');
 
-        $response = new Response($this->httpResponse, array(
+        $response = new Response($this->httpResponse, [
             'jsonrpc' => '2.0',
-            'result' => array('foo', 'bar')
-        ));
+            'result' => ['foo', 'bar']
+        ]);
     }
 
     public function testWithNoResult()
     {
         $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
-        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn([]);
 
         $this->setExpectedException('OutOfRangeException');
 
-        $response = new Response($this->httpResponse, array(
+        $response = new Response($this->httpResponse, [
             'jsonrpc' => '2.0',
             'id' => 1
-        ));
+        ]);
     }
 
     public function testWithNoVersion()
     {
         $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
-        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn(array());
+        $this->httpResponse->shouldReceive('getHeaders')->once()->withNoArgs()->andReturn([]);
 
         $this->setExpectedException('OutOfRangeException');
 
-        $response = new Response($this->httpResponse, array(
-            'result' => array('foo', 'bar'),
+        $response = new Response($this->httpResponse, [
+            'result' => ['foo', 'bar'],
             'id' => 1
-        ));
+        ]);
     }
 }

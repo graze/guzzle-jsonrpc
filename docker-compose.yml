@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  test:
+    image: graze/php-alpine:5.6-test
+    volumes:
+      - .:/srv:cached
+    working_dir: /srv
+
+  composer:
+    image: graze/composer:php-5.6
+    volumes:
+      - .:/usr/src/app:delegated
+      - ~/.composer:/home/composer/.composer:delegated
+      - ~/.ssh/id_rsa:/home/composer/.ssh/id_rsa:ro

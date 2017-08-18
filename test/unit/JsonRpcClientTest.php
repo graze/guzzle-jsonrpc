@@ -25,7 +25,7 @@ class JsonRpcClientTest extends TestCase
 
     public function testBatch()
     {
-        $request = $this->client->batch(array());
+        $request = $this->client->batch([]);
 
         $this->assertInstanceOf('Graze\Guzzle\JsonRpc\Message\BatchRequest', $request);
         $this->assertEquals($this->base, $request->getUrl());
@@ -33,7 +33,7 @@ class JsonRpcClientTest extends TestCase
 
     public function testBatchWithUri()
     {
-        $request = $this->client->batch(array(), 'foo');
+        $request = $this->client->batch([], 'foo');
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\BatchRequest', $request);
         $this->assertEquals($this->base . '/foo', $request->getUrl());
@@ -41,8 +41,8 @@ class JsonRpcClientTest extends TestCase
 
     public function testBatchWithHeaders()
     {
-        $headers = array('foo' => 'bar');
-        $request = $this->client->batch(array(), null, $headers);
+        $headers = ['foo' => 'bar'];
+        $request = $this->client->batch([], null, $headers);
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\BatchRequest', $request);
         $this->assertTrue($request->getHeaders()->get('foo')->hasValue('bar'));
@@ -50,9 +50,9 @@ class JsonRpcClientTest extends TestCase
 
     public function testBatchWithSubRequests()
     {
-        $request = $this->client->batch(array(
+        $request = $this->client->batch([
             m::mock('Graze\\Guzzle\\JsonRpc\\Message\\Request')
-        ));
+        ]);
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\BatchRequest', $request);
     }
@@ -65,31 +65,31 @@ class JsonRpcClientTest extends TestCase
         $this->assertEquals($this->base, $request->getUrl());
         $this->assertEquals('2.0', $request->getRpcVersion());
         $this->assertEquals('foo', $request->getRpcMethod());
-        $this->assertEquals(array(), $request->getRpcParams());
+        $this->assertEquals([], $request->getRpcParams());
         $this->assertNull($request->getRpcId());
     }
 
     public function testNotificationWithParams()
     {
-        $request = $this->client->notification('foo', array('bar'));
+        $request = $this->client->notification('foo', ['bar']);
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Request', $request);
         $this->assertEquals($this->base, $request->getUrl());
         $this->assertEquals('2.0', $request->getRpcVersion());
         $this->assertEquals('foo', $request->getRpcMethod());
-        $this->assertEquals(array('bar'), $request->getRpcParams());
+        $this->assertEquals(['bar'], $request->getRpcParams());
         $this->assertNull($request->getRpcId());
     }
 
     public function testNotificationWithUri()
     {
-        $request = $this->client->notification('foo', array(), 'bar');
+        $request = $this->client->notification('foo', [], 'bar');
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Request', $request);
         $this->assertEquals($this->base . '/bar', $request->getUrl());
         $this->assertEquals('2.0', $request->getRpcVersion());
         $this->assertEquals('foo', $request->getRpcMethod());
-        $this->assertEquals(array(), $request->getRpcParams());
+        $this->assertEquals([], $request->getRpcParams());
         $this->assertNull($request->getRpcId());
     }
 
@@ -101,31 +101,31 @@ class JsonRpcClientTest extends TestCase
         $this->assertEquals($this->base, $request->getUrl());
         $this->assertEquals('2.0', $request->getRpcVersion());
         $this->assertEquals('foo', $request->getRpcMethod());
-        $this->assertEquals(array(), $request->getRpcParams());
+        $this->assertEquals([], $request->getRpcParams());
         $this->assertEquals(1, $request->getRpcId());
     }
 
     public function testRequestWithParams()
     {
-        $request = $this->client->request('foo', 1, array('bar'));
+        $request = $this->client->request('foo', 1, ['bar']);
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Request', $request);
         $this->assertEquals($this->base, $request->getUrl());
         $this->assertEquals('2.0', $request->getRpcVersion());
         $this->assertEquals('foo', $request->getRpcMethod());
-        $this->assertEquals(array('bar'), $request->getRpcParams());
+        $this->assertEquals(['bar'], $request->getRpcParams());
         $this->assertEquals(1, $request->getRpcId());
     }
 
     public function testRequestWithUri()
     {
-        $request = $this->client->request('foo', 1, array(), 'bar');
+        $request = $this->client->request('foo', 1, [], 'bar');
 
         $this->assertInstanceOf('Graze\\Guzzle\\JsonRpc\\Message\\Request', $request);
         $this->assertEquals($this->base . '/bar', $request->getUrl());
         $this->assertEquals('2.0', $request->getRpcVersion());
         $this->assertEquals('foo', $request->getRpcMethod());
-        $this->assertEquals(array(), $request->getRpcParams());
+        $this->assertEquals([], $request->getRpcParams());
         $this->assertEquals(1, $request->getRpcId());
     }
 }

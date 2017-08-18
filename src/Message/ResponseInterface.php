@@ -10,12 +10,13 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
 interface ResponseInterface
 {
     /**
-     * @return integer
+     * @return int
      */
     public function getId();
 

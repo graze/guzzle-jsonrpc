@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use Guzzle\Common\Collection;
@@ -46,16 +47,16 @@ class ErrorResponse extends BaseResponse implements ResponseInterface
     {
         parent::__construct($response->getStatusCode(), $response->getHeaders());
 
-        $this->rpcError  = new Collection(isset($data['error']) ? $data['error'] : array());
+        $this->rpcError  = new Collection(isset($data['error']) ? $data['error'] : []);
         $this->rpcFields = new Collection($data);
 
-        foreach (array('jsonrpc', 'id', 'error') as $key) {
+        foreach (['jsonrpc', 'id', 'error'] as $key) {
             if (!$this->rpcFields->hasKey($key)) {
                 throw new OutOfRangeException('Parameter "' . $key . '" expected but not provided.');
             }
         }
 
-        foreach (array('code', 'message') as $key) {
+        foreach (['code', 'message'] as $key) {
             if (!$this->rpcError->hasKey($key)) {
                 throw new OutOfRangeException('Parameter "' . $key . '" expected in error but not provided.');
             }
@@ -67,7 +68,7 @@ class ErrorResponse extends BaseResponse implements ResponseInterface
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getCode()
     {
@@ -107,8 +108,8 @@ class ErrorResponse extends BaseResponse implements ResponseInterface
     }
 
     /**
-     * @param integer $code
-     * @return boolean
+     * @param int $code
+     * @return bool
      */
     protected function isCodeValid($code)
     {

@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use Guzzle\Common\Collection;
@@ -33,7 +34,7 @@ class Response extends BaseResponse implements ResponseInterface
 
         $this->rpcFields = new Collection($data);
 
-        foreach (array('jsonrpc', 'id', 'result') as $key) {
+        foreach (['jsonrpc', 'id', 'result'] as $key) {
             if (!$this->rpcFields->hasKey($key)) {
                 throw new OutOfRangeException('Parameter "' . $key . '" expected but not provided.');
             }
@@ -42,6 +43,8 @@ class Response extends BaseResponse implements ResponseInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return int
      */
     public function getId()
     {
@@ -58,6 +61,8 @@ class Response extends BaseResponse implements ResponseInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
     public function getVersion()
     {

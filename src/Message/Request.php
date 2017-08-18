@@ -10,12 +10,11 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use Graze\Guzzle\JsonRpc\JsonRpcClientInterface;
 use Guzzle\Common\Collection;
-use Guzzle\Http\Message\EntityEnclosingRequest;
-use OutOfBoundsException;
 use RuntimeException;
 
 class Request extends AbstractRequest implements RequestInterface
@@ -29,7 +28,7 @@ class Request extends AbstractRequest implements RequestInterface
      * @param string $url
      * @param array|Collection $headers
      */
-    public function __construct($url, $headers = array())
+    public function __construct($url, $headers = [])
     {
         parent::__construct($url, $headers);
 
@@ -62,6 +61,8 @@ class Request extends AbstractRequest implements RequestInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return array
      */
     public function getRpcData()
     {
@@ -70,6 +71,8 @@ class Request extends AbstractRequest implements RequestInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return integer|string
      */
     public function getRpcId()
     {
@@ -78,6 +81,8 @@ class Request extends AbstractRequest implements RequestInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param integer|string $id
      */
     public function setRpcId($id)
     {
@@ -86,6 +91,8 @@ class Request extends AbstractRequest implements RequestInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
     public function getRpcMethod()
     {
@@ -94,6 +101,8 @@ class Request extends AbstractRequest implements RequestInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $method
      */
     public function setRpcMethod($method)
     {
@@ -102,6 +111,8 @@ class Request extends AbstractRequest implements RequestInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return array
      */
     public function getRpcParams()
     {
@@ -110,6 +121,8 @@ class Request extends AbstractRequest implements RequestInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $params
      */
     public function setRpcParams(array $params)
     {
@@ -118,6 +131,8 @@ class Request extends AbstractRequest implements RequestInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
     public function getRpcVersion()
     {
@@ -126,6 +141,8 @@ class Request extends AbstractRequest implements RequestInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $version
      */
     public function setRpcVersion($version)
     {

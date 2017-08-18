@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use Guzzle\Http\Message\EntityEnclosingRequest;
@@ -20,7 +21,7 @@ abstract class AbstractRequest extends EntityEnclosingRequest
      * @param string $url
      * @param array|Collection $headers
      */
-    public function __construct($url, $headers = array())
+    public function __construct($url, $headers = [])
     {
         parent::__construct(self::POST, $url, $headers);
     }

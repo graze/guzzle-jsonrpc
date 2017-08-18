@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use Guzzle\Http\Message\RequestInterface as BaseRequestInterface;

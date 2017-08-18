@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use LogicException;
@@ -20,14 +21,14 @@ class BatchRequest extends AbstractRequest
     /**
      * @var Request[]
      */
-    protected $requests = array();
+    protected $requests = [];
 
     /**
-     * @return Response
+     * @return Response[]
      */
     public function send()
     {
-        $responses = array();
+        $responses = [];
         $this->setBody($this->jsonEncode($this->joinRequests($this->requests)));
 
         $batch = $this->sendEntityEnclosingRequest();
@@ -67,7 +68,7 @@ class BatchRequest extends AbstractRequest
      */
     public function setRequests(array $requests)
     {
-        $this->requests = array();
+        $this->requests = [];
 
         foreach ($requests as $request) {
             $this->addRequest($request);
@@ -80,7 +81,7 @@ class BatchRequest extends AbstractRequest
      */
     protected function joinRequests(array $requests)
     {
-        $ids = array();
+        $ids = [];
 
         return array_map(function (RequestInterface $request) use (&$ids) {
             $id = $request->getRpcId();
@@ -103,7 +104,7 @@ class BatchRequest extends AbstractRequest
      */
     protected function mapResponses(array $responses)
     {
-        $map = array();
+        $map = [];
 
         foreach ($responses as $response) {
             if (isset($response['id'])) {

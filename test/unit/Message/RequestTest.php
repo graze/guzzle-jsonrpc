@@ -1,4 +1,5 @@
 <?php
+
 namespace Graze\Guzzle\JsonRpc\Message;
 
 use Graze\Guzzle\JsonRpc\JsonRpcClientInterface;
@@ -17,6 +18,11 @@ class RequestTest extends TestCase
         $this->request->setClient($this->client);
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return string
+     */
     protected function jsonEncode($data)
     {
         return json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
@@ -39,7 +45,7 @@ class RequestTest extends TestCase
 
     public function testSend()
     {
-        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo');
+        $requestData = ['jsonrpc' =>'2.0', 'method' =>'foo'];
         $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
 
         $this->request->setRpcMethod('foo');
@@ -51,8 +57,8 @@ class RequestTest extends TestCase
 
     public function testSendWithId()
     {
-        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
-        $responseData = array('jsonrpc'=>'2.0', 'result'=>array('foo'), 'id'=>1);
+        $requestData = ['jsonrpc' =>'2.0', 'method' =>'foo', 'id' =>1];
+        $responseData = ['jsonrpc' =>'2.0', 'result' => ['foo'], 'id' =>1];
         $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
         $this->httpResponse->shouldReceive('json')->once()->withNoArgs()->andReturn($responseData);
         $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
@@ -68,8 +74,8 @@ class RequestTest extends TestCase
 
     public function testSendWithIdAndNullResult()
     {
-        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
-        $responseData = array('jsonrpc'=>'2.0', 'result'=>null, 'id'=>1);
+        $requestData = ['jsonrpc' =>'2.0', 'method' =>'foo', 'id' =>1];
+        $responseData = ['jsonrpc' =>'2.0', 'result' =>null, 'id' =>1];
         $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
         $this->httpResponse->shouldReceive('json')->once()->withNoArgs()->andReturn($responseData);
         $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
@@ -85,8 +91,8 @@ class RequestTest extends TestCase
 
     public function testSendWithIdAndErrorResult()
     {
-        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
-        $responseData = array('jsonrpc'=>'2.0', 'id'=>1, 'error'=>array('message'=>'', 'code'=>0));
+        $requestData = ['jsonrpc' =>'2.0', 'method' =>'foo', 'id' =>1];
+        $responseData = ['jsonrpc' =>'2.0', 'id' =>1, 'error' => ['message' =>'', 'code' =>0]];
         $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
         $this->httpResponse->shouldReceive('json')->once()->withNoArgs()->andReturn($responseData);
         $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
@@ -102,8 +108,8 @@ class RequestTest extends TestCase
 
     public function testSendWithIdThrowsIfResponseDoesNotMatch()
     {
-        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1);
-        $responseData = array('jsonrpc'=>'2.0', 'result'=>array('foo'), 'id'=>2);
+        $requestData = ['jsonrpc' =>'2.0', 'method' =>'foo', 'id' =>1];
+        $responseData = ['jsonrpc' =>'2.0', 'result' => ['foo'], 'id' =>2];
         $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
         $this->httpResponse->shouldReceive('json')->once()->withNoArgs()->andReturn($responseData);
 
@@ -116,8 +122,8 @@ class RequestTest extends TestCase
 
     public function testSendWithParams()
     {
-        $requestData = array('jsonrpc'=>'2.0', 'method'=>'foo', 'id'=>1, 'params'=>array('foo'));
-        $responseData = array('jsonrpc'=>'2.0', 'result'=>array('foo'), 'id'=>1);
+        $requestData = ['jsonrpc' =>'2.0', 'method' =>'foo', 'id' =>1, 'params' => ['foo']];
+        $responseData = ['jsonrpc' =>'2.0', 'result' => ['foo'], 'id' =>1];
         $this->client->shouldReceive('send')->once()->with($this->request)->andReturn($this->httpResponse);
         $this->httpResponse->shouldReceive('json')->once()->withNoArgs()->andReturn($responseData);
         $this->httpResponse->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
@@ -125,7 +131,7 @@ class RequestTest extends TestCase
 
         $this->request->setRpcMethod('foo');
         $this->request->setRpcId(1);
-        $this->request->setRpcParams(array('foo'));
+        $this->request->setRpcParams(['foo']);
         $response = $this->request->send();
 
         $this->assertInstanceOf('Graze\Guzzle\JsonRpc\Message\Response', $response);
