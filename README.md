@@ -68,20 +68,14 @@ try {
 }
 ```
 
-## Contributing
+### Contributing ###
+
 We accept contributions to the source via Pull Request,
 but passing unit tests must be included before it will be considered for merge.
-```bash
-$ composer install
-$ make test
-```
 
-If you have [Vagrant][vagrant] installed, you can build our dev environment to
-assist development. The repository will be mounted in `/srv`.
 ```bash
-$ vagrant up
-$ vagrant ssh
-$ cd /srv
+$ make deps
+$ make lint test
 ```
 
 ### License
