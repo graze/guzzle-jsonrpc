@@ -1,7 +1,4 @@
-.pid
-.vagrant
 composer.lock
 phpunit.xml
 test/server/node_modules
 vendor
-test/server/yarn.lock
