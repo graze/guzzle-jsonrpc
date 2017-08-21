@@ -1,3 +1,4 @@
+.PHONY: deps deps-js deps-php help
 .PHONY: lint test test-unit test-functional test-coverage test-coverage-clover
 .PHONY: server-start server-stop
 
@@ -34,3 +35,9 @@ test-coverage: ## Run all tests and output coverage to the console.
 
 test-coverage-clover: ## Run all tests and output clover coverage to file.
 	@docker-compose run --rm test phpdbg7 -qrr vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover
+
+help: ## Show this help message.
+	echo "usage: make [target] ..."
+	echo ""
+	echo "targets:"
+	egrep '^(.+)\:\ ##\ (.+)' ${MAKEFILE_LIST} | column -t -c 2 -s ':#'
