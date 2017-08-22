@@ -29,16 +29,20 @@ test: test-unit test-functional
 test-functional: ## Test the functionality
 test-functional: server-start
 	@docker-compose run --rm test vendor/bin/phpunit --testsuite functional
-	@$(MAKE) server-stop
+	@${MAKE} server-stop
 
 test-unit: ## Test the units
 	@docker-compose run --rm test vendor/bin/phpunit --testsuite unit
 
 test-coverage: ## Run all tests and output coverage to the console.
+test-coverage: server-start
 	@docker-compose run --rm test phpdbg7 -qrr vendor/bin/phpunit --coverage-text
+	@${MAKE} server-stop
 
 test-coverage-clover: ## Run all tests and output clover coverage to file.
+test-coverage-clover: server-start
 	@docker-compose run --rm test phpdbg7 -qrr vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover
+	@${MAKE} server-stop
 
 
 help: ## Show this help message.
