@@ -1,7 +1,14 @@
 {
     "name": "graze/guzzle-jsonrpc",
     "description": "JSON-RPC 2.0 client for Guzzle",
-    "keywords": ["guzzle", "http", "json", "json-rpc", "jsonrpc", "rpc"],
+    "keywords": [
+        "guzzle",
+        "http",
+        "json",
+        "json-rpc",
+        "jsonrpc",
+        "rpc"
+    ],
     "homepage": "https://github.com/graze/guzzle-jsonrpc",
     "license": "MIT",
     "type": "library",
@@ -25,7 +32,6 @@
         "mockery/mockery": "~0.9",
         "phpunit/phpunit": "~4.0",
         "graze/standards": "^1.0",
-        "squizlabs/php_codesniffer": "^2.9",
-        "doctrine/instantiator": "<1.1"
+        "squizlabs/php_codesniffer": "^2.9"
     }
 }
