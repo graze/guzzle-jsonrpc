@@ -12,6 +12,8 @@ deps-js: ## Install javascript dependencies
 deps-php: ## Install php dependencies
 	@docker-compose run --rm composer install --prefer-dist
 
+deps-php-update: ## Update php dependencies
+	@docker-compose run --rm composer update --prefer-dist
 
 server-start: ## Start the test server
 	@docker-compose up -d node
