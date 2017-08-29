@@ -12,8 +12,8 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc;
 
+use Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface;
 use Graze\GuzzleHttp\JsonRpc\Test\FunctionalTestCase;
-use GuzzleHttp\Promise\PromiseInterface;
 
 class BatchFunctionalTest extends FunctionalTestCase
 {
@@ -69,6 +69,24 @@ class BatchFunctionalTest extends FunctionalTestCase
         })->wait();
     }
 
+    /**
+     * @param ResponseInterface[] $responses
+     * @param string|int          $id
+     *
+     * @return ResponseInterface
+     */
+    private function getResponseFromArray(array $responses = [], $id)
+    {
+        $filtered = array_values(array_filter($responses, function (ResponseInterface $response) use ($id) {
+            return $response->getRpcId() == $id;
+        }));
+
+        if (count($filtered) === 0) {
+            $this->fail('Unable to find response with id:' . $id);
+        }
+        return reset($filtered);
+    }
+
     public function testBatchRequestWithMultipleChildren()
     {
         $idA = 123;
@@ -108,19 +126,9 @@ class BatchFunctionalTest extends FunctionalTestCase
         $this->assertTrue(is_array($responses));
         $this->assertEquals(3, count($responses));
 
-        $responseA = $responseC = $responseD = null;
-        foreach ($responses as $response) {
-            if ($response->getRpcId() === $idA) {
-                $responseA = $response;
-            } elseif ($response->getRpcId() === $idC) {
-                $responseC = $response;
-            } elseif ($response->getRpcId() === $idD) {
-                $responseD = $response;
-            }
-        }
-        if (is_null($responseA) || is_null($responseC) || is_null($responseD)) {
-            $this->fail('Invalid responses');
-        }
+        $responseA = $this->getResponseFromArray($responses, $idA);
+        $responseC = $this->getResponseFromArray($responses, $idC);
+        $responseD = $this->getResponseFromArray($responses, $idD);
 
         $this->assertEquals(ClientInterface::SPEC, $responseA->getRpcVersion());
         $this->assertEquals(implode('', $paramsA), $responseA->getRpcResult());
@@ -179,19 +187,9 @@ class BatchFunctionalTest extends FunctionalTestCase
             $this->assertTrue(is_array($responses));
             $this->assertEquals(3, count($responses));
 
-            $responseA = $responseC = $responseD = null;
-            foreach ($responses as $response) {
-                if ($response->getRpcId() === $idA) {
-                    $responseA = $response;
-                } elseif ($response->getRpcId() === $idC) {
-                    $responseC = $response;
-                } elseif ($response->getRpcId() === $idD) {
-                    $responseD = $response;
-                }
-            }
-            if (is_null($responseA) || is_null($responseC) || is_null($responseD)) {
-                $this->fail('Invalid responses');
-            }
+            $responseA = $this->getResponseFromArray($responses, $idA);
+            $responseC = $this->getResponseFromArray($responses, $idC);
+            $responseD = $this->getResponseFromArray($responses, $idD);
 
             $this->assertEquals(ClientInterface::SPEC, $responseA->getRpcVersion());
             $this->assertEquals(implode('', $paramsA), $responseA->getRpcResult());

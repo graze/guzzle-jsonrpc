@@ -25,8 +25,8 @@ class FunctionalTestCase extends TestCase
     protected $defaultUrl = 'http://node:80';
 
     /**
-     * @param  string $url
-     * @param  array  $config
+     * @param  string|null $url
+     * @param  array       $config
      *
      * @return Client
      */

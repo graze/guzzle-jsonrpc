@@ -32,7 +32,7 @@ class MessageFactory implements MessageFactoryInterface
     {
         $body = JsonRpc\json_encode($this->addIdToRequest($method, $options));
 
-        return new Request('POST', $uri, $headers, $body);
+        return new Request('POST', $uri, $headers, $body === false ? null : $body);
     }
 
     /**
@@ -46,7 +46,7 @@ class MessageFactory implements MessageFactoryInterface
     {
         $body = JsonRpc\json_encode($options);
 
-        return new Response($statusCode, $headers, $body);
+        return new Response($statusCode, $headers, $body === false ? null : $body);
     }
 
     /**

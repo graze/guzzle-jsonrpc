@@ -16,6 +16,13 @@ use Graze\GuzzleHttp\JsonRpc\Test\UnitTestCase;
 
 class RpcMiddlewareMiddlewareTest extends UnitTestCase
 {
+    /** @var mixed */
+    private $request;
+    /** @var mixed */
+    private $response;
+    /** @var RpcErrorMiddleware */
+    private $middleware;
+
     public function setUp()
     {
         $this->request = $this->mockRequest();
