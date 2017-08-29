@@ -75,7 +75,7 @@ class BatchFunctionalTest extends FunctionalTestCase
      *
      * @return ResponseInterface
      */
-    private function getResponseFromArray(array $responses = [], $id)
+    private function getResponseFromArray(array $responses, $id)
     {
         $filtered = array_values(array_filter($responses, function (ResponseInterface $response) use ($id) {
             return $response->getRpcId() == $id;
