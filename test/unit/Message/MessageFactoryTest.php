@@ -17,6 +17,9 @@ use Graze\GuzzleHttp\JsonRpc\Test\UnitTestCase;
 
 class MessageFactoryTest extends UnitTestCase
 {
+    /** @var MessageFactory */
+    private $factory;
+
     public function setup()
     {
         $this->factory = new MessageFactory();

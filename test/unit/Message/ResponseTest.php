@@ -17,6 +17,9 @@ use Graze\GuzzleHttp\JsonRpc\Test\UnitTestCase;
 
 class ResponseTest extends UnitTestCase
 {
+    /** @var mixed */
+    private $stream;
+
     public function setUp()
     {
         $this->stream = $this->mockStream();

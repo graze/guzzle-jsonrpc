@@ -81,7 +81,7 @@ class Client implements ClientInterface
      * @link   http://www.jsonrpc.org/specification#notification
      *
      * @param  string           $method
-     * @param  array            $params
+     * @param  array|null       $params
      *
      * @return RequestInterface
      */
@@ -101,7 +101,7 @@ class Client implements ClientInterface
      *
      * @param  mixed            $id
      * @param  string           $method
-     * @param  array            $params
+     * @param  array|null       $params
      *
      * @return RequestInterface
      */

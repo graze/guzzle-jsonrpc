@@ -29,6 +29,9 @@ class RpcMiddlewareMiddlewareTest extends UnitTestCase
         $this->assertSame($this->request, $this->middleware->applyRequest($this->request, []));
     }
 
+    /**
+     * @expectedException \Graze\GuzzleHttp\JsonRpc\Exception\ClientException
+     */
     public function testApplyResponseThrowsClientException()
     {
         $this->response->shouldReceive('getRpcErrorCode')->times(2)->withNoArgs()->andReturn(-32600);
@@ -37,10 +40,12 @@ class RpcMiddlewareMiddlewareTest extends UnitTestCase
         $this->response->shouldReceive('getRpcErrorMessage')->once()->withNoArgs()->andReturn('bar');
         $this->response->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
 
-        $this->setExpectedException('Graze\GuzzleHttp\JsonRpc\Exception\ClientException');
         $this->middleware->applyResponse($this->request, $this->response, ['rpc_error' => true]);
     }
 
+    /**
+     * @expectedException \Graze\GuzzleHttp\JsonRpc\Exception\ServerException
+     */
     public function testApplyResponseThrowsServerException()
     {
         $this->response->shouldReceive('getRpcErrorCode')->times(2)->withNoArgs()->andReturn(-32000);
@@ -49,7 +54,6 @@ class RpcMiddlewareMiddlewareTest extends UnitTestCase
         $this->response->shouldReceive('getRpcErrorMessage')->once()->withNoArgs()->andReturn('bar');
         $this->response->shouldReceive('getStatusCode')->once()->withNoArgs()->andReturn(200);
 
-        $this->setExpectedException('Graze\GuzzleHttp\JsonRpc\Exception\ServerException');
         $this->middleware->applyResponse($this->request, $this->response, ['rpc_error' => true]);
     }
 

@@ -13,20 +13,16 @@
 namespace Graze\GuzzleHttp\JsonRpc;
 
 use Graze\GuzzleHttp\JsonRpc\Test\FunctionalTestCase;
+use GuzzleHttp\Promise\PromiseInterface;
 
 class NotificationFunctionalTest extends FunctionalTestCase
 {
+    /** @var Client */
+    private $client;
+
     public function setUp()
     {
         $this->client = $this->createClient();
-    }
-
-    public function tearDown()
-    {
-        if (isset($this->promise)) {
-            $this->promise->wait(false); // Stop PHPUnit closing before async assertions
-            unset($this->promise);
-        }
     }
 
     public function testNotifyRequest()
@@ -49,16 +45,16 @@ class NotificationFunctionalTest extends FunctionalTestCase
         $method = 'notify';
         $params = ['foo'=>true];
         $request = $this->client->notification($method, $params);
-        $this->promise = $this->client->sendAsync($request);
+        $promise = $this->client->sendAsync($request);
 
-        $this->promise->then(function ($response) use ($request, $method, $params) {
+        $promise->then(function ($response) use ($request, $method, $params) {
             $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
             $this->assertEquals(null, $request->getRpcId());
             $this->assertEquals($method, $request->getRpcMethod());
             $this->assertEquals($params, $request->getRpcParams());
 
             $this->assertNull($response);
-        });
+        })->wait();
     }
 
     public function testNotifyRequestWithInvalidParams()
@@ -81,15 +77,15 @@ class NotificationFunctionalTest extends FunctionalTestCase
         $method = 'notify';
         $params = ['foo'=>'bar'];
         $request = $this->client->notification($method, $params);
-        $this->promise = $this->client->sendAsync($request);
+        $promise = $this->client->sendAsync($request);
 
-        $this->promise->then(function ($response) use ($request, $method, $params) {
+        $promise->then(function ($response) use ($request, $method, $params) {
             $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
             $this->assertEquals(null, $request->getRpcId());
             $this->assertEquals($method, $request->getRpcMethod());
             $this->assertEquals($params, $request->getRpcParams());
 
             $this->assertNull($response);
-        });
+        })->wait();
     }
 }

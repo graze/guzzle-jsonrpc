@@ -26,10 +26,10 @@ class RequestException extends HttpRequestException
     /**
      * {@inheritdoc}
      *
-     * @param HttpRequestInterface  $request        Request
-     * @param HttpResponseInterface $response       Response received
-     * @param \Exception            $previous       Previous exception
-     * @param array                 $handlerContext Optional handler context.
+     * @param HttpRequestInterface       $request        Request
+     * @param HttpResponseInterface|null $response       Response received
+     * @param \Exception|null            $previous       Previous exception
+     * @param array|null                 $handlerContext Optional handler context.
      *
      * @return HttpRequestException
      */
@@ -45,10 +45,10 @@ class RequestException extends HttpRequestException
             $errorCode = $response->getRpcErrorCode();
             if (in_array($errorCode, $clientErrorCodes)) {
                 $label = 'Client RPC error response';
-                $className = __NAMESPACE__ . '\\ClientException';
+                $className = ClientException::class;
             } else {
                 $label = 'Server RPC error response';
-                $className = __NAMESPACE__ . '\\ServerException';
+                $className = ServerException::class;
             }
 
             $message = $label . ' [uri] ' . $request->getRequestTarget()

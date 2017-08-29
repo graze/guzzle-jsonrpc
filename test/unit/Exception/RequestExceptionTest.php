@@ -17,6 +17,11 @@ use Graze\GuzzleHttp\JsonRpc\Test\UnitTestCase;
 
 class RequestExceptionTest extends UnitTestCase
 {
+    /** @var mixed */
+    private $request;
+    /** @var mixed */
+    private $response;
+
     public function setUp()
     {
         $this->request = $this->mockRequest();
