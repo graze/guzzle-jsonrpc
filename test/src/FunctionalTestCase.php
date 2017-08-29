@@ -22,11 +22,11 @@ class FunctionalTestCase extends TestCase
     /**
      * @var string
      */
-    protected $defaultUrl = 'http://0.0.0.0:8000';
+    protected $defaultUrl = 'http://node:80';
 
     /**
-     * @param  string $url
-     * @param  array  $config
+     * @param  string|null $url
+     * @param  array       $config
      *
      * @return Client
      */

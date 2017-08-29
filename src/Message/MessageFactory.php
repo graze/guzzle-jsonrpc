@@ -21,27 +21,38 @@ use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 class MessageFactory implements MessageFactoryInterface
 {
     /**
-     * {@inheritdoc}
+     * @param string            $method
+     * @param string            $uri
+     * @param array             $headers
+     * @param array             $options
+     *
+     * @return RequestInterface
      */
     public function createRequest($method, $uri, array $headers = [], array $options = [])
     {
         $body = JsonRpc\json_encode($this->addIdToRequest($method, $options));
 
-        return new Request('POST', $uri, $headers, $body);
+        return new Request('POST', $uri, $headers, $body === false ? null : $body);
     }
 
     /**
-     * {@inheritdoc}
+     * @param int                $statusCode
+     * @param array              $headers
+     * @param array              $options
+     *
+     * @return ResponseInterface
      */
     public function createResponse($statusCode, array $headers = [], array $options = [])
     {
         $body = JsonRpc\json_encode($options);
 
-        return new Response($statusCode, $headers, $body);
+        return new Response($statusCode, $headers, $body === false ? null : $body);
     }
 
     /**
-     * {@inheritdoc}
+     * @param  HttpRequestInterface $request
+     *
+     * @return RequestInterface
      */
     public function fromRequest(HttpRequestInterface $request)
     {
@@ -54,7 +65,9 @@ class MessageFactory implements MessageFactoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param  HttpResponseInterface $response
+     *
+     * @return ResponseInterface
      */
     public function fromResponse(HttpResponseInterface $response)
     {

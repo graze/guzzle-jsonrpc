@@ -34,7 +34,11 @@ class ResponseFactoryMiddleware extends AbstractMiddleware
     }
 
     /**
-     * {@inheritdoc}
+     * @param  HttpRequestInterface  $request
+     * @param  HttpResponseInterface $response
+     * @param  array                 $options
+     *
+     * @return HttpResponseInterface
      */
     public function applyResponse(HttpRequestInterface $request, HttpResponseInterface $response, array $options)
     {

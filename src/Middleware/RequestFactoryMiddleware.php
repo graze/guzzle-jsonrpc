@@ -33,7 +33,10 @@ class RequestFactoryMiddleware extends AbstractMiddleware
     }
 
     /**
-     * {@inheritdoc}
+     * @param  HttpRequestInterface $request
+     * @param  array                $options
+     *
+     * @return HttpRequestInterface
      */
     public function applyRequest(HttpRequestInterface $request, array $options)
     {

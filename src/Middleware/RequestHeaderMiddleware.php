@@ -19,7 +19,10 @@ use Psr\Http\Message\RequestInterface as HttpRequestInterface;
 class RequestHeaderMiddleware extends AbstractMiddleware
 {
     /**
-     * {@inheritdoc}
+     * @param  HttpRequestInterface $request
+     * @param  array                $options
+     *
+     * @return HttpRequestInterface
      */
     public function applyRequest(HttpRequestInterface $request, array $options)
     {

@@ -10,23 +10,35 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc\Exception;
 
 use Graze\GuzzleHttp\JsonRpc\Test\UnitTestCase;
 
 class RequestExceptionTest extends UnitTestCase
 {
+    /** @var mixed */
+    private $request;
+    /** @var mixed */
+    private $response;
+
     public function setUp()
     {
         $this->request = $this->mockRequest();
         $this->response = $this->mockResponse();
     }
 
+    /**
+     * @return array
+     */
     public function dataCreateClientException()
     {
         return [[-32600], [-32601], [-32602], [-32700]];
     }
 
+    /**
+     * @return array
+     */
     public function dataCreateServerException()
     {
         return [[-32603], [-32000], [-32099], [-10000]];
@@ -34,6 +46,8 @@ class RequestExceptionTest extends UnitTestCase
 
     /**
      * @dataProvider dataCreateClientException
+     *
+     * @param int $code
      */
     public function testCreateClientException($code)
     {
@@ -49,6 +63,8 @@ class RequestExceptionTest extends UnitTestCase
 
     /**
      * @dataProvider dataCreateServerException
+     *
+     * @param int $code
      */
     public function testCreateServerException($code)
     {

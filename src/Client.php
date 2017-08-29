@@ -25,6 +25,7 @@ use Graze\GuzzleHttp\JsonRpc\Middleware\ResponseFactoryMiddleware;
 use Graze\GuzzleHttp\JsonRpc\Middleware\RpcErrorMiddleware;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\ClientInterface as HttpClientInterface;
+use GuzzleHttp\Promise\PromiseInterface;
 
 class Client implements ClientInterface
 {
@@ -76,6 +77,13 @@ class Client implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @link   http://www.jsonrpc.org/specification#notification
+     *
+     * @param  string           $method
+     * @param  array|null       $params
+     *
+     * @return RequestInterface
      */
     public function notification($method, array $params = null)
     {
@@ -88,6 +96,14 @@ class Client implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @link   http://www.jsonrpc.org/specification#request_object
+     *
+     * @param  mixed            $id
+     * @param  string           $method
+     * @param  array|null       $params
+     *
+     * @return RequestInterface
      */
     public function request($id, $method, array $params = null)
     {
@@ -101,6 +117,10 @@ class Client implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param  RequestInterface       $request
+     *
+     * @return ResponseInterface|null
      */
     public function send(RequestInterface $request)
     {
@@ -111,6 +131,10 @@ class Client implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param  RequestInterface       $request
+     *
+     * @return PromiseInterface
      */
     public function sendAsync(RequestInterface $request)
     {
@@ -123,6 +147,12 @@ class Client implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @link   http://www.jsonrpc.org/specification#batch
+     *
+     * @param  RequestInterface[]  $requests
+     *
+     * @return ResponseInterface[]
      */
     public function sendAll(array $requests)
     {
@@ -133,6 +163,12 @@ class Client implements ClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @link   http://www.jsonrpc.org/specification#batch
+     *
+     * @param  RequestInterface[]  $requests
+     *
+     * @return PromiseInterface
      */
     public function sendAllAsync(array $requests)
     {
@@ -150,7 +186,7 @@ class Client implements ClientInterface
      *
      * @return RequestInterface
      */
-    protected function createRequest($method, $options)
+    protected function createRequest($method, array $options)
     {
         $uri = $this->httpClient->getConfig('base_uri');
         $defaults = $this->httpClient->getConfig('defaults');

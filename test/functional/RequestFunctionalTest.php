@@ -12,22 +12,18 @@
  */
 namespace Graze\GuzzleHttp\JsonRpc;
 
-use Graze\GuzzleHttp\JsonRpc\Subscriber\ErrorSubscriber;
+use Graze\GuzzleHttp\JsonRpc\Exception\ClientException;
 use Graze\GuzzleHttp\JsonRpc\Test\FunctionalTestCase;
+use GuzzleHttp\Promise\PromiseInterface;
 
 class RequestFunctionalTest extends FunctionalTestCase
 {
+    /** @var Client */
+    private $client;
+
     public function setUp()
     {
         $this->client = $this->createClient();
-    }
-
-    public function tearDown()
-    {
-        if (isset($this->promise)) {
-            $this->promise->wait(false); // Stop PHPUnit closing before async assertions
-            unset($this->promise);
-        }
     }
 
     public function testConcatRequest()
@@ -57,9 +53,9 @@ class RequestFunctionalTest extends FunctionalTestCase
         $method = 'concat';
         $params = ['foo'=>'abc', 'bar'=>'def'];
         $request = $this->client->request($id, $method, $params);
-        $this->promise = $this->client->sendAsync($request);
+        $promise = $this->client->sendAsync($request);
 
-        $this->promise->then(function ($response) use ($request, $id, $method, $params) {
+        $promise->then(function ($response) use ($request, $id, $method, $params) {
             $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
             $this->assertEquals($id, $request->getRpcId());
             $this->assertEquals($method, $request->getRpcMethod());
@@ -71,7 +67,7 @@ class RequestFunctionalTest extends FunctionalTestCase
             $this->assertEquals(null, $response->getRpcErrorCode());
             $this->assertEquals(null, $response->getRpcErrorMessage());
             $this->assertEquals(null, $response->getRpcErrorData());
-        });
+        })->wait();
     }
 
     public function testSumRequest()
@@ -101,9 +97,9 @@ class RequestFunctionalTest extends FunctionalTestCase
         $method = 'sum';
         $params = ['foo'=>123, 'bar'=>456];
         $request = $this->client->request($id, $method, $params);
-        $this->promise = $this->client->sendAsync($request);
+        $promise = $this->client->sendAsync($request);
 
-        $this->promise->then(function ($response) use ($request, $id, $method, $params) {
+        $promise->then(function ($response) use ($request, $id, $method, $params) {
             $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
             $this->assertEquals($id, $request->getRpcId());
             $this->assertEquals($method, $request->getRpcMethod());
@@ -115,7 +111,7 @@ class RequestFunctionalTest extends FunctionalTestCase
             $this->assertEquals(null, $response->getRpcErrorCode());
             $this->assertEquals(null, $response->getRpcErrorMessage());
             $this->assertEquals(null, $response->getRpcErrorData());
-        });
+        })->wait();
     }
 
     public function testFooRequest()
@@ -143,9 +139,9 @@ class RequestFunctionalTest extends FunctionalTestCase
         $id = 'abc';
         $method = 'foo';
         $request = $this->client->request($id, $method, []);
-        $this->promise = $this->client->sendAsync($request);
+        $promise = $this->client->sendAsync($request);
 
-        $this->promise->then(function ($response) use ($request, $id, $method) {
+        $promise->then(function ($response) use ($request, $id, $method) {
             $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
             $this->assertEquals($id, $request->getRpcId());
             $this->assertEquals($method, $request->getRpcMethod());
@@ -157,7 +153,7 @@ class RequestFunctionalTest extends FunctionalTestCase
             $this->assertEquals(null, $response->getRpcErrorCode());
             $this->assertEquals(null, $response->getRpcErrorMessage());
             $this->assertEquals(null, $response->getRpcErrorData());
-        });
+        })->wait();
     }
 
     public function testBarRequest()
@@ -185,9 +181,9 @@ class RequestFunctionalTest extends FunctionalTestCase
         $id = 'abc';
         $method = 'bar';
         $request = $this->client->request($id, $method, []);
-        $this->promise = $this->client->sendAsync($request);
+        $promise = $this->client->sendAsync($request);
 
-        $this->promise->then(function ($response) use ($request, $id, $method) {
+        $promise->then(function ($response) use ($request, $id, $method) {
             $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
             $this->assertEquals($id, $request->getRpcId());
             $this->assertEquals($method, $request->getRpcMethod());
@@ -199,9 +195,12 @@ class RequestFunctionalTest extends FunctionalTestCase
             $this->assertTrue(is_int($response->getRpcErrorCode()));
             $this->assertTrue(is_string($response->getRpcErrorMessage()));
             $this->assertEquals(null, $response->getRpcErrorData());
-        });
+        })->wait();
     }
 
+    /**
+     * @expectedException \Graze\GuzzleHttp\JsonRpc\Exception\ClientException
+     */
     public function testBarRequestThrows()
     {
         $id = 'abc';
@@ -214,8 +213,7 @@ class RequestFunctionalTest extends FunctionalTestCase
         $this->assertEquals($method, $request->getRpcMethod());
         $this->assertEquals(null, $request->getRpcParams());
 
-        $this->setExpectedException('Graze\GuzzleHttp\JsonRpc\Exception\ClientException');
-        $response = $client->send($request);
+        $client->send($request);
     }
 
     public function testBarAsyncRequestIsRejected()
@@ -224,17 +222,17 @@ class RequestFunctionalTest extends FunctionalTestCase
         $method = 'bar';
         $client = $this->createClient(null, ['rpc_error' => true]);
         $request = $client->request($id, $method, []);
-        $this->promise = $client->sendAsync($request);
+        $promise = $client->sendAsync($request);
 
         $this->assertEquals(ClientInterface::SPEC, $request->getRpcVersion());
         $this->assertEquals($id, $request->getRpcId());
         $this->assertEquals($method, $request->getRpcMethod());
         $this->assertEquals(null, $request->getRpcParams());
 
-        $this->promise->then(function ($response) use ($request, $id, $method) {
+        $promise->then(function () use ($request, $id, $method) {
             $this->fail('This promise should not be fulfilled');
         }, function ($reason) {
-            $this->assertInstanceOf('Graze\GuzzleHttp\JsonRpc\Exception\ClientException', $reason);
-        });
+            $this->assertInstanceOf(ClientException::class, $reason);
+        })->wait();
     }
 }

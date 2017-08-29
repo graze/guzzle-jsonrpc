@@ -36,7 +36,7 @@ interface ClientInterface
      * @link   http://www.jsonrpc.org/specification#notification
      *
      * @param  string           $method
-     * @param  array            $params
+     * @param  array|null       $params
      *
      * @return RequestInterface
      */
@@ -53,7 +53,7 @@ interface ClientInterface
      *
      * @param  mixed            $id
      * @param  string           $method
-     * @param  array            $params
+     * @param  array|null       $params
      *
      * @return RequestInterface
      */

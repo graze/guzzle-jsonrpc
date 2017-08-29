@@ -18,6 +18,15 @@ use Mockery;
 
 class ClientTest extends UnitTestCase
 {
+    /** @var mixed */
+    private $httpClient;
+    /** @var mixed */
+    private $httpHandler;
+    /** @var mixed */
+    private $messageFactory;
+    /** @var Client */
+    private $client;
+
     public function setup()
     {
         $this->httpClient = $this->mockHttpClient();
