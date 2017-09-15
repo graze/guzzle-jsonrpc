@@ -5,6 +5,14 @@
     "homepage": "https://github.com/graze/guzzle-jsonrpc",
     "license": "MIT",
     "type": "library",
+    "config": {
+        "platform": {
+            "ext-simplexml": "1.0",
+            "ext-dom": "1.0",
+            "ext-tokenizer": "1.0",
+            "ext-xmlwriter": "1.0"
+        }
+    },
     "authors": [
         {
             "name": "Graze tech team",
