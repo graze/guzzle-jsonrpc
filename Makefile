@@ -1,33 +1,52 @@
-NJS := `which node`
-PWD := `pwd`
-PID := $(PWD)/.pid
+.PHONY: deps deps-js deps-php help
+.PHONY: lint test test-unit test-functional test-coverage test-coverage-clover
+.PHONY: server-start server-stop
 
-.PHONY: cs test
 
-all: deps
-
-cs:
-	@vendor/bin/php-cs-fixer fix src
-
+deps: ## Install all dependencies
 deps: deps-php deps-js
 
-deps-js:
-	@cd test/server && npm install
+deps-js: ## Install javascript dependencies
+	@docker-compose run --rm node yarn install
 
-deps-php:
-	@composer install
+deps-php: ## Install php dependencies
+	@docker-compose run --rm composer install --prefer-dist
 
-server-start:
-	@start-stop-daemon -S -b -m -o -p $(PID) -d $(PWD)/test/server -x $(NJS) -- index.js
 
-server-stop:
-	@start-stop-daemon -K -p $(PID)
+server-start: ## Start the test server
+	@docker-compose up -d node
 
+server-stop: ## Stop the test server
+	@docker-compose stop node
+
+
+lint: ## Run phpcs against the code.
+	@docker-compose run --rm test vendor/bin/phpcs -p --warning-severity=0 --ignore=test/server src/ test/
+
+test: ## Run all the tests
 test: test-unit test-functional
 
+test-functional: ## Test the functionality
 test-functional: server-start
-	@vendor/bin/phpunit --testsuite functional
-	@$(MAKE) server-stop
+	@docker-compose run --rm test vendor/bin/phpunit --testsuite functional
+	@${MAKE} server-stop
 
-test-unit:
-	@vendor/bin/phpunit --testsuite unit
+test-unit: ## Test the units
+	@docker-compose run --rm test vendor/bin/phpunit --testsuite unit
+
+test-coverage: ## Run all tests and output coverage to the console.
+test-coverage: server-start
+	@docker-compose run --rm test phpdbg7 -qrr vendor/bin/phpunit --coverage-text
+	@${MAKE} server-stop
+
+test-coverage-clover: ## Run all tests and output clover coverage to file.
+test-coverage-clover: server-start
+	@docker-compose run --rm test phpdbg7 -qrr vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover
+	@${MAKE} server-stop
+
+
+help: ## Show this help message.
+	@echo "usage: make [target] ..."
+	@echo ""
+	@echo "targets:"
+	@egrep '^(.+)\:\ ##\ (.+)' ${MAKEFILE_LIST} | column -t -c 2 -s ':#'

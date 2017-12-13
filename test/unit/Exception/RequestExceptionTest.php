@@ -22,11 +22,17 @@ class RequestExceptionTest extends UnitTestCase
         $this->response = $this->mockResponse();
     }
 
+    /**
+     * @return array
+     */
     public function dataCreateClientException()
     {
         return [[-32600], [-32601], [-32602], [-32700]];
     }
 
+    /**
+     * @return array
+     */
     public function dataCreateServerException()
     {
         return [[-32603], [-32000], [-32099], [-10000]];
@@ -34,6 +40,8 @@ class RequestExceptionTest extends UnitTestCase
 
     /**
      * @dataProvider dataCreateClientException
+     *
+     * @param int $code
      */
     public function testCreateClientException($code)
     {
@@ -49,6 +57,8 @@ class RequestExceptionTest extends UnitTestCase
 
     /**
      * @dataProvider dataCreateServerException
+     *
+     * @param int $code
      */
     public function testCreateServerException($code)
     {

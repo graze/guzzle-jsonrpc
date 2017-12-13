@@ -18,7 +18,7 @@ class Utils
      * Wrapper for json_encode that includes character escaping by default
      *
      * @param  mixed          $data
-     * @param  boolean        $escapeChars
+     * @param  bool           $escapeChars
      * @return string|boolean
      */
     public static function jsonEncode($data, $escapeChars = true)
