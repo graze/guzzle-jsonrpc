@@ -2,13 +2,13 @@ version: '2'
 
 services:
   test:
-    image: graze/php-alpine:test
+    image: graze/php-alpine:7.1-test
     volumes:
       - .:/srv:cached
     working_dir: /srv
 
   node:
-    image: node:8
+    image: node:8-alpine
     expose:
       - 80
     volumes:
@@ -18,8 +18,7 @@ services:
     command: node -- index.js
 
   composer:
-    image: graze/composer
+    image: composer
     volumes:
-      - .:/usr/src/app:delegated
-      - ~/.composer:/home/composer/.composer:delegated
-      - ~/.ssh/id_rsa:/home/composer/.ssh/id_rsa:ro
+      - .:/app:delegated
+      - ~/.composer:/tmp:delegated

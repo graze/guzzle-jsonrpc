@@ -43,7 +43,7 @@ class Client implements ClientInterface
      */
     public static function factory($url, array $config = [])
     {
-        return new self(new HttpClient(array_replace_recursive([
+        $client = new HttpClient(array_replace_recursive([
             'base_url' => $url,
             'message_factory' => self::createMessageFactory(),
             'defaults' => [
@@ -51,7 +51,11 @@ class Client implements ClientInterface
                     'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3'
                 ]
             ]
-        ], $config)));
+        ], $config));
+        if (isset($config['subscribers'])) {
+            array_map([$client->getEmitter(), 'attach'], $config['subscribers']);
+        }
+        return new self($client);
     }
 
     /**
@@ -65,7 +69,7 @@ class Client implements ClientInterface
     public function notification($method, array $params = null)
     {
         return $this->createRequest(RequestInterface::NOTIFICATION, array_filter([
-            'jsonrpc' => self::SPEC,
+            'jsonrpc' => static::SPEC,
             'method'  => $method,
             'params'  => $params
         ]));
@@ -83,7 +87,7 @@ class Client implements ClientInterface
     public function request($id, $method, array $params = null)
     {
         return $this->createRequest(RequestInterface::REQUEST, array_filter([
-            'jsonrpc' => self::SPEC,
+            'jsonrpc' => static::SPEC,
             'method'  => $method,
             'params'  => $params,
             'id'      => $id
