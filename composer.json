@@ -27,9 +27,9 @@
     },
     "require-dev": {
         "adlawson/timezone": "~1.0",
-        "squizlabs/php_codesniffer": "^2.9",
+        "squizlabs/php_codesniffer": "^3",
         "mockery/mockery": "~0.9",
         "phpunit/phpunit": "~4.3",
-        "graze/standards": "^1.0"
+        "graze/standards": "^2.0"
     }
 }
