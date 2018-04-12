@@ -14,6 +14,7 @@
 
 namespace Graze\GuzzleHttp\JsonRpc;
 
+use Graze\GuzzleHttp\JsonRpc\Exception\JsonDecodeException;
 use InvalidArgumentException;
 
 /**
@@ -50,12 +51,9 @@ function json_decode($json, $assoc = false, $depth = 512, $options = 0)
 
     if (JSON_ERROR_NONE !== json_last_error()) {
         $last = json_last_error();
-        throw new InvalidArgumentException(
-            'Unable to parse JSON data: '
-            . (isset($jsonErrors[$last])
-                ? $jsonErrors[$last]
-                : 'Unknown error')
-        );
+        $message = 'Unable to parse JSON data: ' . (isset($jsonErrors[$last]) ? $jsonErrors[$last] : 'Unknown error');
+
+        throw new JsonDecodeException($message, 0, null, $json);
     }
 
     return $data;
