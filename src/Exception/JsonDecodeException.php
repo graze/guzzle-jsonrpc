@@ -24,13 +24,12 @@ class JsonDecodeException extends \InvalidArgumentException
     private $json;
 
     /**
-     * JsonDecodeException constructor.
-     * @param string $message
-     * @param int $code
-     * @param Throwable|null $previous
-     * @param $json
+     * @param string        $message    The Exception message to throw
+     * @param int           $code       The Exception code
+     * @param Throwable     $previous   The previous throwable used for the exception chaining
+     * @param string        $json       The JSON data.
      */
-    public function __construct($message = "", $code = 0, Throwable $previous = null, $json)
+    public function __construct($message = "", $code = 0, Throwable $previous = null, $json = "")
     {
         parent::__construct($message, $code, $previous);
         $this->json = $json;
