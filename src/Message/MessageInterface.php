@@ -24,7 +24,7 @@ interface MessageInterface extends HttpMessageInterface
     public function getRpcId();
 
     /**
-     * @return string
+     * @return null|string
      */
     public function getRpcVersion();
 }
