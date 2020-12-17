@@ -40,7 +40,7 @@
         "adlawson/timezone": "~1.0",
         "squizlabs/php_codesniffer": "^2.9",
         "mockery/mockery": "~0.9",
-        "phpunit/phpunit": "^5",
+        "phpunit/phpunit": "^5.7",
         "graze/standards": "^1.0"
     }
 }

@@ -34,7 +34,7 @@ before_script:
 
 script:
   - vendor/bin/phpcs -p --warning-severity=0 --ignore=test/server src/ test/
-  - vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover --testsuite unit
+  - php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover --testsuite unit
   - make test-functional
 
 after_script:
