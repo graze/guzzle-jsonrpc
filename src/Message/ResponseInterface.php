@@ -19,12 +19,12 @@ use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 interface ResponseInterface extends MessageInterface, HttpResponseInterface
 {
     /**
-     * @return int
+     * @return null|int
      */
     public function getRpcErrorCode();
 
     /**
-     * @return string
+     * @return null|string
      */
     public function getRpcErrorMessage();
 
