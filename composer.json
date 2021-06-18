@@ -32,9 +32,8 @@
     },
     "require": {
         "php": ">=5.5|^7.0",
-        "guzzlehttp/guzzle": "^6.0",
-        "guzzlehttp/promises": "^1.0",
-        "psr/http-message": "^1.0"
+        "psr/http-message": "^1.0",
+        "guzzlehttp/guzzle": "^7.3"
     },
     "require-dev": {
         "adlawson/timezone": "~1.0",
