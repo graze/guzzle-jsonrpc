@@ -15,9 +15,8 @@
 namespace Graze\GuzzleHttp\JsonRpc\Test;
 
 use Graze\GuzzleHttp\JsonRpc\Client;
-use PHPUnit_Framework_TestCase as TestCase;
 
-class FunctionalTestCase extends TestCase
+class FunctionalTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var string

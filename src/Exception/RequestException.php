@@ -17,6 +17,7 @@ namespace Graze\GuzzleHttp\JsonRpc\Exception;
 use Exception;
 use Graze\GuzzleHttp\JsonRpc\Message\RequestInterface;
 use Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface;
+use GuzzleHttp\BodySummarizerInterface;
 use GuzzleHttp\Exception\RequestException as HttpRequestException;
 use Psr\Http\Message\RequestInterface as HttpRequestInterface;
 use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
@@ -26,19 +27,19 @@ class RequestException extends HttpRequestException
     /**
      * {@inheritdoc}
      *
-     * @param HttpRequestInterface       $request        Request
-     * @param HttpResponseInterface|null $response       Response received
-     * @param \Exception|null            $previous       Previous exception
-     * @param array|null                 $handlerContext Optional handler context.
-     *
-     * @return HttpRequestException
+     * @param HttpRequestInterface         $request        Request sent
+     * @param HttpResponseInterface        $response       Response received
+     * @param \Throwable|null              $previous       Previous exception
+     * @param array                        $handlerContext Optional handler context
+     * @param BodySummarizerInterface|null $bodySummarizer Optional body summarizer
      */
     public static function create(
         HttpRequestInterface $request,
         HttpResponseInterface $response = null,
-        Exception $previous = null,
-        array $handlerContext = null
-    ) {
+        \Throwable $previous = null,
+        array $handlerContext = [],
+        BodySummarizerInterface $bodySummarizer = null
+    ): self {
         if ($request instanceof RequestInterface && $response instanceof ResponseInterface) {
             static $clientErrorCodes = [-32600, -32601, -32602, -32700];
 
@@ -59,6 +60,6 @@ class RequestException extends HttpRequestException
             return new $className($message, $request, $response, $previous);
         }
 
-        return parent::create($request, $response, $previous);
+        return parent::create($request, $response, $previous, $handlerContext, $bodySummarizer);
     }
 }

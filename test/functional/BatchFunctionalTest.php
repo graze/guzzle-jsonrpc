@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc;
 
 use Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface;
@@ -20,7 +21,7 @@ class BatchFunctionalTest extends FunctionalTestCase
     /** @var Client */
     private $client;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->client = $this->createClient();
     }
@@ -29,7 +30,7 @@ class BatchFunctionalTest extends FunctionalTestCase
     {
         $id = 'abc';
         $method = 'sum';
-        $params = ['foo'=>123, 'bar'=>456];
+        $params = ['foo' => 123, 'bar' => 456];
         $request = $this->client->request($id, $method, $params);
         $responses = $this->client->sendAll([$request]);
 
@@ -96,10 +97,10 @@ class BatchFunctionalTest extends FunctionalTestCase
         $methodB = 'nofify';
         $methodC = 'sum';
         $methodD = 'bar';
-        $paramsA = ['foo'=>'abc', 'bar'=>'def'];
-        $paramsB = ['foo'=>false];
-        $paramsC = ['foo'=>123, 'bar'=>456];
-        $paramsD = ['foo'=>123, 'bar'=>456];
+        $paramsA = ['foo' => 'abc', 'bar' => 'def'];
+        $paramsB = ['foo' => false];
+        $paramsC = ['foo' => 123, 'bar' => 456];
+        $paramsD = ['foo' => 123, 'bar' => 456];
         $requestA = $this->client->request($idA, $methodA, $paramsA);
         $requestB = $this->client->notification($methodB, $paramsB);
         $requestC = $this->client->request($idC, $methodC, $paramsC);
@@ -156,10 +157,10 @@ class BatchFunctionalTest extends FunctionalTestCase
         $methodB = 'nofify';
         $methodC = 'sum';
         $methodD = 'bar';
-        $paramsA = ['foo'=>'abc', 'bar'=>'def'];
-        $paramsB = ['foo'=>false];
-        $paramsC = ['foo'=>123, 'bar'=>456];
-        $paramsD = ['foo'=>123, 'bar'=>456];
+        $paramsA = ['foo' => 'abc', 'bar' => 'def'];
+        $paramsB = ['foo' => false];
+        $paramsC = ['foo' => 123, 'bar' => 456];
+        $paramsD = ['foo' => 123, 'bar' => 456];
         $requestA = $this->client->request($idA, $methodA, $paramsA);
         $requestB = $this->client->notification($methodB, $paramsB);
         $requestC = $this->client->request($idC, $methodC, $paramsC);

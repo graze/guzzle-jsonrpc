@@ -22,7 +22,7 @@ class RequestExceptionTest extends UnitTestCase
     /** @var mixed */
     private $response;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->request = $this->mockRequest();
         $this->response = $this->mockResponse();

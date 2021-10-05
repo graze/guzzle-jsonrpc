@@ -8,10 +8,8 @@ cache:
     - $HOME/.npm
 
 php:
-  - 5.5
-  - 5.6
-  - 7
-  - 7.1
+  - 7.2
+  - 8.0
   - hhvm
   - nightly
 
@@ -31,8 +29,11 @@ before_script:
 
 script:
   - vendor/bin/phpcs -p --warning-severity=0 --ignore=test/server src/ test/
-  - vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover --testsuite unit
+  - vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover
+    --testsuite unit
   - make test-functional
 
 after_script:
-  - test -f ./tests/report/coverage.clover && (wget https://scrutinizer-ci.com/ocular.phar; php ocular.phar code-coverage:upload --format=php-clover ./tests/report/coverage.clover)
+  - test -f ./tests/report/coverage.clover && (wget
+    https://scrutinizer-ci.com/ocular.phar; php ocular.phar code-coverage:upload
+    --format=php-clover ./tests/report/coverage.clover)

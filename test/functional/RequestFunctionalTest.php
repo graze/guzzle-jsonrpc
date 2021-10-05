@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc;
 
 use Graze\GuzzleHttp\JsonRpc\Exception\ClientException;
@@ -21,7 +22,7 @@ class RequestFunctionalTest extends FunctionalTestCase
     /** @var Client */
     private $client;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->client = $this->createClient();
     }
@@ -30,7 +31,7 @@ class RequestFunctionalTest extends FunctionalTestCase
     {
         $id = 123;
         $method = 'concat';
-        $params = ['foo'=>'abc', 'bar'=>'def'];
+        $params = ['foo' => 'abc', 'bar' => 'def'];
         $request = $this->client->request($id, $method, $params);
         $response = $this->client->send($request);
 
@@ -51,7 +52,7 @@ class RequestFunctionalTest extends FunctionalTestCase
     {
         $id = 123;
         $method = 'concat';
-        $params = ['foo'=>'abc', 'bar'=>'def'];
+        $params = ['foo' => 'abc', 'bar' => 'def'];
         $request = $this->client->request($id, $method, $params);
         $promise = $this->client->sendAsync($request);
 
@@ -74,7 +75,7 @@ class RequestFunctionalTest extends FunctionalTestCase
     {
         $id = 'abc';
         $method = 'sum';
-        $params = ['foo'=>123, 'bar'=>456];
+        $params = ['foo' => 123, 'bar' => 456];
         $request = $this->client->request($id, $method, $params);
         $response = $this->client->send($request);
 
@@ -95,7 +96,7 @@ class RequestFunctionalTest extends FunctionalTestCase
     {
         $id = 'abc';
         $method = 'sum';
-        $params = ['foo'=>123, 'bar'=>456];
+        $params = ['foo' => 123, 'bar' => 456];
         $request = $this->client->request($id, $method, $params);
         $promise = $this->client->sendAsync($request);
 
@@ -198,11 +199,10 @@ class RequestFunctionalTest extends FunctionalTestCase
         })->wait();
     }
 
-    /**
-     * @expectedException \Graze\GuzzleHttp\JsonRpc\Exception\ClientException
-     */
     public function testBarRequestThrows()
     {
+        $this->expectException(ClientException::class);
+
         $id = 'abc';
         $method = 'bar';
         $client = $this->createClient(null, ['rpc_error' => true]);

@@ -15,10 +15,12 @@
 namespace Graze\GuzzleHttp\JsonRpc\Test;
 
 use Mockery;
-use PHPUnit_Framework_TestCase as TestCase;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-class UnitTestCase extends TestCase
+class UnitTestCase extends \PHPUnit\Framework\TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @return Mockery\MockInterface
      */

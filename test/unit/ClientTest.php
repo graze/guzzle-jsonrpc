@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc;
 
 use Graze\GuzzleHttp\JsonRpc\Message\RequestInterface;
@@ -27,7 +28,7 @@ class ClientTest extends UnitTestCase
     /** @var Client */
     private $client;
 
-    public function setup()
+    public function setUp(): void
     {
         $this->httpClient = $this->mockHttpClient();
         $this->httpHandler = $this->mockHttpHandler();
@@ -52,7 +53,7 @@ class ClientTest extends UnitTestCase
     public function testNotification()
     {
         $request = $this->mockRequest();
-        $jsonrpc = ['jsonrpc'=>ClientInterface::SPEC, 'method'=>'foo'];
+        $jsonrpc = ['jsonrpc' => ClientInterface::SPEC, 'method' => 'foo'];
         $type = RequestInterface::NOTIFICATION;
         $uri = 'http://foo';
 
@@ -66,7 +67,7 @@ class ClientTest extends UnitTestCase
     public function testNotificationWithParams()
     {
         $request = $this->mockRequest();
-        $jsonrpc = ['jsonrpc'=>ClientInterface::SPEC, 'method'=>'foo', 'params'=>['bar'=>true]];
+        $jsonrpc = ['jsonrpc' => ClientInterface::SPEC, 'method' => 'foo', 'params' => ['bar' => true]];
         $type = RequestInterface::NOTIFICATION;
         $uri = 'http://foo';
 
@@ -74,13 +75,13 @@ class ClientTest extends UnitTestCase
         $this->httpClient->shouldReceive('getConfig')->once()->with('defaults')->andReturn([]);
         $this->messageFactory->shouldReceive('createRequest')->once()->with($type, $uri, [], $jsonrpc)->andReturn($request);
 
-        $this->assertSame($request, $this->client->notification('foo', ['bar'=>true]));
+        $this->assertSame($request, $this->client->notification('foo', ['bar' => true]));
     }
 
     public function testRequest()
     {
         $request = $this->mockRequest();
-        $jsonrpc = ['jsonrpc'=>ClientInterface::SPEC, 'method'=>'foo', 'id'=>123];
+        $jsonrpc = ['jsonrpc' => ClientInterface::SPEC, 'method' => 'foo', 'id' => 123];
         $type = RequestInterface::REQUEST;
         $uri = 'http://foo';
 
@@ -94,7 +95,7 @@ class ClientTest extends UnitTestCase
     public function testRequestWithParams()
     {
         $request = $this->mockRequest();
-        $jsonrpc = ['jsonrpc'=>ClientInterface::SPEC, 'method'=>'foo', 'params'=>['bar'=>true], 'id'=>123];
+        $jsonrpc = ['jsonrpc' => ClientInterface::SPEC, 'method' => 'foo', 'params' => ['bar' => true], 'id' => 123];
         $type = RequestInterface::REQUEST;
         $uri = 'http://foo';
 
@@ -102,13 +103,13 @@ class ClientTest extends UnitTestCase
         $this->httpClient->shouldReceive('getConfig')->once()->with('defaults')->andReturn([]);
         $this->messageFactory->shouldReceive('createRequest')->once()->with($type, $uri, [], $jsonrpc)->andReturn($request);
 
-        $this->assertSame($request, $this->client->request(123, 'foo', ['bar'=>true]));
+        $this->assertSame($request, $this->client->request(123, 'foo', ['bar' => true]));
     }
 
     public function testRequestWithEmptyParams()
     {
         $request = $this->mockRequest();
-        $jsonrpc = ['jsonrpc'=>ClientInterface::SPEC, 'method'=>'foo', 'id'=>123];
+        $jsonrpc = ['jsonrpc' => ClientInterface::SPEC, 'method' => 'foo', 'id' => 123];
         $type = RequestInterface::REQUEST;
         $uri = 'http://foo';
 
