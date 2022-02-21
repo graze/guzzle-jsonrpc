@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc\Message;
 
 use Graze\GuzzleHttp\JsonRpc\ClientInterface;
@@ -20,7 +21,7 @@ class ResponseTest extends UnitTestCase
     /** @var mixed */
     private $stream;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->stream = $this->mockStream();
     }
@@ -50,7 +51,7 @@ class ResponseTest extends UnitTestCase
     public function testGetRpcErrorCode()
     {
         $response = new Response(200, [], json_encode([
-            'error' => ['code'=>123]
+            'error' => ['code' => 123]
         ]));
 
         $this->assertEquals(123, $response->getRpcErrorCode());
@@ -66,7 +67,7 @@ class ResponseTest extends UnitTestCase
     public function testGetRpcErrorMessage()
     {
         $response = new Response(200, [], json_encode([
-            'error' => ['message'=>'foo']
+            'error' => ['message' => 'foo']
         ]));
 
         $this->assertEquals('foo', $response->getRpcErrorMessage());

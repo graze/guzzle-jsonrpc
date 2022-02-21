@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc\Message;
 
 use Graze\GuzzleHttp\JsonRpc\ClientInterface;
@@ -20,7 +21,7 @@ class MessageFactoryTest extends UnitTestCase
     /** @var MessageFactory */
     private $factory;
 
-    public function setup()
+    public function setUp(): void
     {
         $this->factory = new MessageFactory();
     }
@@ -48,7 +49,7 @@ class MessageFactoryTest extends UnitTestCase
     public function testCreateResponse()
     {
         $status = 200;
-        $headers = ['Content-Type'=>'application/json'];
+        $headers = ['Content-Type' => 'application/json'];
 
         $response = $this->factory->createResponse($status, $headers);
         $this->assertInstanceOf('Graze\GuzzleHttp\JsonRpc\Message\ResponseInterface', $response);
@@ -65,7 +66,7 @@ class MessageFactoryTest extends UnitTestCase
     public function testCreateResponseWithOptions()
     {
         $status = 200;
-        $headers = ['Content-Type'=>'application/json'];
+        $headers = ['Content-Type' => 'application/json'];
         $options = [
             'jsonrpc' => ClientInterface::SPEC,
             'result' => 'foo',

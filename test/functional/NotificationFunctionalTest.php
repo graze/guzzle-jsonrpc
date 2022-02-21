@@ -10,6 +10,7 @@
  * @see  http://github.com/graze/guzzle-jsonrpc/blob/master/LICENSE
  * @link http://github.com/graze/guzzle-jsonrpc
  */
+
 namespace Graze\GuzzleHttp\JsonRpc;
 
 use Graze\GuzzleHttp\JsonRpc\Test\FunctionalTestCase;
@@ -20,7 +21,7 @@ class NotificationFunctionalTest extends FunctionalTestCase
     /** @var Client */
     private $client;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->client = $this->createClient();
     }
@@ -28,7 +29,7 @@ class NotificationFunctionalTest extends FunctionalTestCase
     public function testNotifyRequest()
     {
         $method = 'notify';
-        $params = ['foo'=>true];
+        $params = ['foo' => true];
         $request = $this->client->notification($method, $params);
         $response = $this->client->send($request);
 
@@ -43,7 +44,7 @@ class NotificationFunctionalTest extends FunctionalTestCase
     public function testAsyncNotifyRequest()
     {
         $method = 'notify';
-        $params = ['foo'=>true];
+        $params = ['foo' => true];
         $request = $this->client->notification($method, $params);
         $promise = $this->client->sendAsync($request);
 
@@ -60,7 +61,7 @@ class NotificationFunctionalTest extends FunctionalTestCase
     public function testNotifyRequestWithInvalidParams()
     {
         $method = 'notify';
-        $params = ['foo'=>'bar'];
+        $params = ['foo' => 'bar'];
         $request = $this->client->notification($method, $params);
         $response = $this->client->send($request);
 
@@ -75,7 +76,7 @@ class NotificationFunctionalTest extends FunctionalTestCase
     public function testAsyncNotifyRequestWithInvalidParams()
     {
         $method = 'notify';
-        $params = ['foo'=>'bar'];
+        $params = ['foo' => 'bar'];
         $request = $this->client->notification($method, $params);
         $promise = $this->client->sendAsync($request);
 
