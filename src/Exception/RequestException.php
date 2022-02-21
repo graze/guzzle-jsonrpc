@@ -39,7 +39,7 @@ class RequestException extends HttpRequestException
         \Throwable $previous = null,
         array $handlerContext = [],
         BodySummarizerInterface $bodySummarizer = null
-    ): self {
+    ): HttpRequestException {
         if ($request instanceof RequestInterface && $response instanceof ResponseInterface) {
             static $clientErrorCodes = [-32600, -32601, -32602, -32700];
 
