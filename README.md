@@ -1,4 +1,8 @@
-# Guzzle JSON-RPC
+# [ABANDONED] Guzzle JSON-RPC
+
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
+### This is no longer supported, please consider forking this repository to make any desired changes.
 
 [![Master branch build status][ico-build]][travis]
 [![Coverage Status][ico-coverage]][coverage]
