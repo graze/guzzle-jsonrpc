@@ -31,8 +31,8 @@
         }
     },
     "require": {
-        "php": ">=5.5|^7.0",
-        "guzzlehttp/guzzle": "^6.0",
+        "php": "^7.0|^8.1",
+        "guzzlehttp/guzzle": "^7.0",
         "guzzlehttp/promises": "^1.0",
         "psr/http-message": "^1.0"
     },
